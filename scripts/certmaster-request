@@ -4,7 +4,9 @@
 import sys
 import distutils.sysconfig
 
-from func.minion import server
+print "This app is not implemented yet!"
 
-if __name__ == "__main__":
-    server.main(sys.argv)
+# from func.minion import server
+#
+#if __name__ == "__main__":
+#    server.main(sys.argv)

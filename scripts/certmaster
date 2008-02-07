@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from func import certmaster
+from certmaster import certmaster
 
 import sys
 

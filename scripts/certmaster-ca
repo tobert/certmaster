@@ -9,9 +9,9 @@ import sys
 import glob
 import os
 
-import func
-import func.certs
-import func.certmaster
+import certmaster
+import certmaster.certs
+import certmaster.certmaster
 
 
 
@@ -46,7 +46,7 @@ def main(args):
         errorprint('Must be root to run certmaster-ca')
         return 1
         
-    cm = func.certmaster.CertMaster()
+    cm = certmaster.certmaster.CertMaster()
     
     (opts, args) = parseargs(args)
 
