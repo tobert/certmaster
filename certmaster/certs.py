@@ -21,8 +21,8 @@ import utils
 
 def_country = 'UN'
 def_state = 'FC'
-def_local = 'Func-ytown'
-def_org = 'func'
+def_local = 'Certmaster-town'
+def_org = 'certmaster'
 def_ou = 'slave-key'
 
 
@@ -83,7 +83,7 @@ def retrieve_cert_from_file(certfile):
     return cert
 
 
-def create_ca(CN="Func Certificate Authority", ca_key_file=None, ca_cert_file=None):
+def create_ca(CN="Certmaster Certificate Authority", ca_key_file=None, ca_cert_file=None):
     cakey = make_keypair(dest=ca_key_file)
     careq = make_csr(cakey, cn=CN)
     cacert = crypto.X509()

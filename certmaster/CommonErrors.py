@@ -60,7 +60,8 @@ def canIgnoreSocketError(e):
 
     return False
 
-class Func_Client_Exception(Exception):
+# FIXME: is anything using this?  remove underscores
+class CertMaster_Client_Exception(Exception):
     def __init__(self, value=None):
         Exception.__init__(self)
         self.value = value

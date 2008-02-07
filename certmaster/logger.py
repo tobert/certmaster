@@ -1,4 +1,4 @@
-## func
+## Certmaster
 ##
 ## Copyright 2007, Red Hat, Inc
 ## See AUTHORS
@@ -14,8 +14,8 @@
 
 
 import logging
-from func.config import read_config
-from func.commonconfig import FuncdConfig
+from certmaster.config import read_config
+from certmaster.commonconfig import CertmasterConfig
 
 
 # from the comments in http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66531
@@ -31,9 +31,9 @@ class Singleton(object):
 class Logger(Singleton):
     _no_handlers = True
 
-    def __init__(self, logfilepath ="/var/log/func/func.log"):
-        config_file = '/etc/func/minion.conf'
-        self.config = read_config(config_file, FuncdConfig)    
+    def __init__(self, logfilepath ="/var/log/certmaster/certmaster.log"):
+        config_file = '/etc/certmaster/minion.conf'
+        self.config = read_config(config_file, CertMasterConfig)    
         self.loglevel = logging._levelNames[self.config.log_level]
         self._setup_logging()
         if self._no_handlers:
@@ -42,7 +42,7 @@ class Logger(Singleton):
     def _setup_logging(self):
         self.logger = logging.getLogger("svc")
 
-    def _setup_handlers(self, logfilepath="/var/log/func/func.log"):
+    def _setup_handlers(self, logfilepath="/var/log/certmaster/certmaster.log"):
         handler = logging.FileHandler(logfilepath, "a")
         self.logger.setLevel(self.loglevel)
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -53,7 +53,7 @@ class Logger(Singleton):
 
 class AuditLogger(Singleton):
     _no_handlers = True
-    def __init__(self, logfilepath = "/var/log/func/audit.log"):
+    def __init__(self, logfilepath = "/var/log/certmaster/audit.log"):
         self.loglevel = logging.INFO
         self._setup_logging()
         if self._no_handlers:
@@ -67,7 +67,7 @@ class AuditLogger(Singleton):
     def _setup_logging(self):
         self.logger = logging.getLogger("audit")
 
-    def _setup_handlers(self, logfilepath="/var/log/func/audit.log"):
+    def _setup_handlers(self, logfilepath="/var/log/certmaster/audit.log"):
         handler = logging.FileHandler(logfilepath, "a")
         self.logger.setLevel(self.loglevel)
         formatter = logging.Formatter("%(asctime)s - %(message)s")

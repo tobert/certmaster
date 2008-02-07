@@ -1,7 +1,7 @@
 """
-func
+Certmaster
 
-Copyright 2007, Red Hat, Inc
+Copyright 2007-2008, Red Hat, Inc
 See AUTHORS
 
 This software may be freely redistributed under the terms of the GNU
@@ -15,11 +15,12 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 import exceptions
 
 
-class FuncException(exceptions.Exception):
+class CertMasterException(exceptions.Exception):
     pass
 
 
-class InvalidMethodException(FuncException):
+class InvalidMethodException(CertMasterException):
     pass
 
 # FIXME: more sub-exceptions maybe
+
