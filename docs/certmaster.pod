@@ -1,6 +1,7 @@
 =head1 NAME
 
-certmaster -- hands out certificates to funcd and other components.
+certmaster -- hands out certificates to programs that want them, like
+certmaster-request or users of the certmaster API
 
 =head1 SYNOPSIS
 
@@ -8,19 +9,17 @@ certmaster (it's a daemon and takes no arguments)
 
 =head1 DESCRIPTION
 
-See https://hosted.fedoraproject.org/projects/func/
+See https://fedorahosted.org/certmaster
 
-Certmaster is run on the master-control machine on a network being
-controlled by func.  It hands out certificates to machines running
-funcd. 
+Certmaster is a daemon that runs on a "master" machine to hand out certificates to machines that want them.  Certificates can then be used by applications like func.
 
-Certmaster is configured by /etc/func/certmaster.conf
+Certmaster is configured by /etc/certmaster/certmaster.conf
 
 =head1 ADDITONAL RESOURCES
 
-See https://hosted.fedoraproject.org/projects/func/.  It's a Wiki.
+See https://fedorahosted.org/certmaster/.  It's a Wiki.
 
-See also the manpages for "func", "func-inventory", "funcd", "certmaster-ca".
+See also the manpages for "certmaster-request" and "certmaster-ca".
 
 =head1 AUTHOR
 

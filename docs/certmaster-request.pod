@@ -1,0 +1,36 @@
+=head1 NAME
+
+certmaster-request -- requests SSL certs from a certmasster
+Fedora Unified Network Controller.
+
+=head1 SYNOPSIS
+
+certmaster-request [--server certmaster.example.com] [--port port] 
+[ --wait infinite/seconds ]
+
+=head1 DESCRIPTION
+
+FIXME: To be added later once we split this out from func.
+
+=head1 API
+
+Note: Many applications will want to use the XMLRPC API (see source) or import
+the Python code to request certs.  For those that don't want to do that,
+this command line tool is available.  Explore the other options if they
+make more sense for your application.
+
+=head1 EXIT_STATUS
+
+non-zero upon failure.
+
+=head1 ADDITONAL RESOURCES
+
+See https://fedorahosted.org/certmaster for more information
+
+See also the manpages for "certmaster", and "certmaster-ca".
+
+=head1 AUTHOR
+
+Various. See https://fedorahosted.org/func
+
+
