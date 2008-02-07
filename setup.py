@@ -15,7 +15,6 @@ if __name__ == "__main__":
  
         manpath    = "share/man/man1/"
         etcpath    = "/etc/%s" % NAME
-        etcmodpath = "/etc/%s/modules" % NAME
         initpath   = "/etc/init.d/"
         logpath    = "/var/log/%s/" % NAME
 	certdir    = "/var/lib/%s/certmaster" % NAME
@@ -40,15 +39,11 @@ if __name__ == "__main__":
 	        	    "%s/minion" % NAME,
 			    "%s/overlord" % NAME,
                 ],
-                data_files = [(initpath, ["init-scripts/certmasterd"]),
-                              (initpath, ["init-scripts/certmaster"]),
+                data_files = [(initpath, ["init-scripts/certmaster"]),
                               (etcpath,  ["etc/minion.conf"]),
                               (etcpath,  ["etc/certmaster.conf"]),
-                              (etcmodpath, []),
                               (manpath,  ["docs/certmaster.1.gz"]),
-                              (manpath,  ["docs/certmaster-inventory.1.gz"]),
-                              (manpath,  ["docs/certmasterd.1.gz"]),
-                              (manpath,  ["docs/certmaster.1.gz"]),
+                              (manpath,  ["docs/certmaster-request.1.gz"]),
                               (manpath,  ["docs/certmaster-ca.1.gz"]),
 			      (rotpath,  ['etc/certmaster_rotate']),
                               (logpath,  []),

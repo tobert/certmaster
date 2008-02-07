@@ -14,7 +14,7 @@ all: rpms
 
 
 manpage:
-	pod2man --center="certmaster-request" --release="" ./docs/certmaster-inventory.pod | gzip -c > ./docs/certmaster-inventory.1.gz
+	pod2man --center="certmaster-request" --release="" ./docs/certmaster-inventory.pod | gzip -c > ./docs/certmaster-request.1.gz
 	pod2man --center="certmaster" --release="" ./docs/certmaster.pod | gzip -c > ./docs/certmaster.1.gz
 	pod2man --center="certmaster-ca" --release="" ./docs/certmaster-ca.pod | gzip -c > ./docs/certmaster-ca.1.gz
 
@@ -65,7 +65,6 @@ install_rpm:
 
 restart:
 	-/etc/init.d/certmaster restart
-	-/etc/init.d/certmasterd restart
 
 recombuild: install_harder restart
 
@@ -86,7 +85,7 @@ money: clean
 	-sloccount --addlang "makefile" $(TOPDIR) $(PYDIRS) $(EXAMPLEDIR) $(INITDIR) 
 
 async: install
-	/sbin/service certmasterd restart
+	/sbin/service certmaster restart
 	sleep 4
 
 rpms: build manpage sdist
