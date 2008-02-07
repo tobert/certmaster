@@ -12,18 +12,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright (c) 2007 Red Hat, inc 
+# Copyright (c) 2007-2008 Red Hat, inc 
 #- Written by Seth Vidal skvidal @ fedoraproject.org
 
 import sys
 import os
 import os.path
-import func.certs 
+import certmaster.certs 
 
 
-cadir = '/etc/pki/func/ca'
-ca_key_file = '%s/funcmaster.key' % cadir
-ca_cert_file = '%s/funcmaster.crt' % cadir
+cadir = '/etc/pki/certmaster/ca'
+ca_key_file = '%s/certmaster.key' % cadir
+ca_cert_file = '%s/certmaster.crt' % cadir
 
 
 def main():

@@ -1,6 +1,8 @@
-func - Fedora unified Network Controller?
+certmaster -- it hands out SSL certs!
 
-https://hosted.fedoraproject.org/projects/func/
+read more at:
 
-Source: http://git.fedoraproject.org/hosted/func.git/
+https://hosted.fedoraproject.org/projects/certmaster
+
+Source: http://git.fedoraproject.org/git/certmaster.git
 

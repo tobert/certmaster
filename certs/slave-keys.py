@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright (c) 2007 Red Hat, inc 
+# Copyright (c) 2007-2008 Red Hat, inc 
 #- Written by Seth Vidal skvidal @ fedoraproject.org
 
 import sys
@@ -23,7 +23,7 @@ import time
 
 from  exceptions import Exception
 
-import func.certs
+import certmaster.certs
 
 
 def submit_csr_to_master(csr_file, master_uri):
@@ -49,11 +49,11 @@ def main(cert_dir, master_uri):
         if not os.path.exists(cert_dir):
             os.makedirs(cert_dir)
         if not os.path.exists(key_file):
-            keypair = func.certs.make_keypair(dest=key_file)
+            keypair = certmaster.certs.make_keypair(dest=key_file)
         if not os.path.exists(csr_file):
             if not keypair:
-                keypair = func.certs.retrieve_key_from_file(key_file)
-            csr = func.certs.make_csr(keypair, dest=csr_file)
+                keypair = certmaster.certs.retrieve_key_from_file(key_file)
+            csr = certmaster.certs.make_csr(keypair, dest=csr_file)
     except Exception, e: # need a little more specificity here
         print e
         return 1
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     if len(sys.argv[1:]) > 0: 
         cert_dir = sys.argv[1]
     else:
-        cert_dir = '/etc/pki/func'
+        cert_dir = '/etc/pki/certmaster'
     
     if len(sys.argv[1:]) > 1:
         master_uri = sys.argv[2]
