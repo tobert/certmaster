@@ -18,8 +18,8 @@ manpage:
 	pod2man --center="certmaster" --release="" ./docs/certmaster.pod | gzip -c > ./docs/certmaster.1.gz
 	pod2man --center="certmaster-ca" --release="" ./docs/certmaster-ca.pod | gzip -c > ./docs/certmaster-ca.1.gz
 
-messages: certmaster/minion/*.py
-	xgettext -k_ -kN_ -o $(MESSAGESPOT) certmaster/minion/*.py
+messages: certmaster/*.py
+	xgettext -k_ -kN_ -o $(MESSAGESPOT) certmaster/*.py
 	sed -i'~' -e 's/SOME DESCRIPTIVE TITLE/certmaster/g' -e 's/YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/2007 Red Hat, inc. /g' -e 's/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR/Adrian Likins <alikins@redhat.com>, 2007/g' -e 's/PACKAGE VERSION/certmaster $(VERSION)-$(RELEASE)/g' -e 's/PACKAGE/certmaster/g' $(MESSAGESPOT)
 
 
