@@ -25,7 +25,6 @@ import glob
 import socket
 import exceptions
 
-#from func.server import codes
 import certs
 import codes
 import utils
@@ -33,7 +32,7 @@ from config import read_config
 from commonconfig import CMConfig
 
 CERTMASTER_LISTEN_PORT = 51235
-CERTMASTER_CONFIG = "/etc/func/certmaster.conf"
+CERTMASTER_CONFIG = "/etc/certmaster/certmaster.conf"
 
 class CertMaster(object):
     def __init__(self, conf_file=CERTMASTER_CONFIG):
@@ -42,8 +41,8 @@ class CertMaster(object):
         usename = utils.get_hostname(talk_to_certmaster=False)
 
         mycn = '%s-CA-KEY' % usename
-        self.ca_key_file = '%s/funcmaster.key' % self.cfg.cadir
-        self.ca_cert_file = '%s/funcmaster.crt' % self.cfg.cadir
+        self.ca_key_file = '%s/certmaster.key' % self.cfg.cadir
+        self.ca_cert_file = '%s/certmaster.crt' % self.cfg.cadir
         try:
             if not os.path.exists(self.cfg.cadir):
                 os.makedirs(self.cfg.cadir)
@@ -230,7 +229,7 @@ def serve(xmlrpcinstance):
 
 def main(argv):
     
-    cm = CertMaster('/etc/func/certmaster.conf')
+    cm = CertMaster('/etc/certmaster/certmaster.conf')
 
     if "daemon" in argv or "--daemon" in argv:
         utils.daemonize("/var/run/certmaster.pid")

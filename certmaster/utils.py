@@ -151,7 +151,7 @@ def create_minion_keys():
             csr = certs.make_csr(keypair, dest=csr_file)
     except Exception, e:
         traceback.print_exc()
-        raise codes.FuncException, "Could not create local keypair or csr for session"
+        raise codes.CMException, "Could not create local keypair or csr for session"
 
     result = False
     log = logger.Logger().logger
@@ -161,7 +161,7 @@ def create_minion_keys():
             log.debug("submitting CSR to certmaster %s" % master_uri)
             result, cert_string, ca_cert_string = submit_csr_to_master(csr_file, master_uri)
         except socket.gaierror, e:
-            raise codes.FuncException, "Could not locate certmaster at %s" % master_uri
+            raise codes.CMException, "Could not locate certmaster at %s" % master_uri
 
         # logging here would be nice
         if not result:

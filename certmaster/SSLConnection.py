@@ -8,7 +8,7 @@
 
 from OpenSSL import SSL
 import time, socket, select
-from func.CommonErrors import canIgnoreSSLError
+from CommonErrors import canIgnoreSSLError
 
 
 class SSLConnection:
