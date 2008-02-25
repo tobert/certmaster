@@ -16,8 +16,21 @@ import sys
 import traceback
 import xmlrpclib
 import socket
+import time
+import glob
 
+import codes
+import certs
+from config import read_config
+from commonconfig import MinionConfig
+import logger
+
+# FIXME: module needs better pydoc
+
+
+# FIXME: can remove this constant?
 REMOTE_ERROR = "REMOTE_ERROR"
+
 
 def trace_me():
     x = traceback.extract_stack()
@@ -44,6 +57,7 @@ def daemonize(pidfile=None):
         sys.exit(0)
 
 def nice_exception(etype, evalue, etb):
+    # FIXME: I believe we can remove this function
     etype = str(etype)
     lefti = etype.index("'") + 1
     righti = etype.rindex("'")
@@ -51,16 +65,8 @@ def nice_exception(etype, evalue, etb):
     nicestack = string.join(traceback.format_list(traceback.extract_tb(etb)))
     return [ REMOTE_ERROR, nicetype, str(evalue), nicestack ] 
 
-def get_hostname():
-    fqdn = socket.getfqdn()
-    host = socket.gethostname()
-    if fqdn.find(host) != -1:
-        return fqdn
-    else:
-        return host
-
-
 def is_error(result):
+    # FIXME: I believe we can remove this function
     if type(result) != list:
         return False
     if len(result) == 0:
@@ -69,5 +75,123 @@ def is_error(result):
         return True
     return False
 
+def get_hostname():
+    """
+    "localhost" is a lame hostname to use for a key, so try to get
+    a more meaningful hostname. We do this by connecting to the certmaster
+    and seeing what interface/ip it uses to make that connection, and looking
+    up the hostname for that. 
+    """
+    # FIXME: this code ignores http proxies (which granted, we don't
+    #      support elsewhere either. It also hardcodes the port number
+    #      for the certmaster for now
+    hostname = None
+    hostname = socket.gethostname()
+    try:
+        ip = socket.gethostbyname(hostname)
+    except:
+        return hostname
+    if ip != "127.0.0.1":
+        return hostname
 
+
+    config_file = '/etc/certmaster/minion.conf'
+    config = read_config(config_file, MinionConfig)
+
+    server = config.certmaster
+    port = 51235
+
+    try:
+        s = socket.socket()
+        s.settimeout(5)
+        s.connect((server, port))
+        (intf, port) = s.getsockname()
+        hostname = socket.gethostbyaddr(intf)[0]
+        s.close()
+    except:
+        s.close()
+        raise
+
+    return hostname
+    
+
+
+def create_minion_keys():
+    # FIXME: paths should not be hard coded here, move to settings universally
+    config_file = '/etc/certmaster/minion.conf'
+    config = read_config(config_file, MinionConfig)
+    cert_dir = config.cert_dir
+    master_uri = 'http://%s:51235/' % config.certmaster
+    print "DEBUG: acquiring hostname"
+    hn = get_hostname()
+    print "DEBUG: hostname = %s\n" % hn
+
+    if hn is None:
+        raise codes.CMException("Could not determine a hostname other than localhost")
+
+    key_file = '%s/%s.pem' % (cert_dir, hn)
+    csr_file = '%s/%s.csr' % (cert_dir, hn)
+    cert_file = '%s/%s.cert' % (cert_dir, hn)
+    ca_cert_file = '%s/ca.cert' % cert_dir
+
+
+    if os.path.exists(cert_file) and os.path.exists(ca_cert_file):
+        print "DEBUG: err, no cert_file"
+        return
+
+    keypair = None
+    try:
+        if not os.path.exists(cert_dir):
+            os.makedirs(cert_dir)
+        if not os.path.exists(key_file):
+            keypair = certs.make_keypair(dest=key_file)
+        if not os.path.exists(csr_file):
+            if not keypair:
+                keypair = certs.retrieve_key_from_file(key_file)
+            csr = certs.make_csr(keypair, dest=csr_file)
+    except Exception, e:
+        traceback.print_exc()
+        raise codes.FuncException, "Could not create local keypair or csr for session"
+
+    result = False
+    log = logger.Logger().logger
+    while not result:
+        try:
+            print "DEBUG: submitting CSR to certmaster: %s" % master_uri
+            log.debug("submitting CSR to certmaster %s" % master_uri)
+            result, cert_string, ca_cert_string = submit_csr_to_master(csr_file, master_uri)
+        except socket.gaierror, e:
+            raise codes.FuncException, "Could not locate certmaster at %s" % master_uri
+
+        # logging here would be nice
+        if not result:
+            print "DEBUG: no response from certmaster, sleeping 10 seconds"
+            log.warning("no response from certmaster %s, sleeping 10 seconds" % master_uri)
+            time.sleep(10)
+
+
+    if result:
+        print "DEBUG: recieved certificate from certmaster"
+        log.debug("received certificate from certmaster %s, storing" % master_uri)
+        cert_fd = os.open(cert_file, os.O_RDWR|os.O_CREAT, 0644)
+        os.write(cert_fd, cert_string)
+        os.close(cert_fd)
+
+        ca_cert_fd = os.open(ca_cert_file, os.O_RDWR|os.O_CREAT, 0644)
+        os.write(ca_cert_fd, ca_cert_string)
+        os.close(ca_cert_fd)
+
+def submit_csr_to_master(csr_file, master_uri):
+    """"
+    gets us our cert back from the certmaster.wait_for_cert() method
+    takes csr_file as path location and master_uri
+    returns Bool, str(cert), str(ca_cert)
+    """
+
+    fo = open(csr_file)
+    csr = fo.read()
+    s = xmlrpclib.ServerProxy(master_uri)
+
+    print "DEBUG: waiting for cert"
+    return s.wait_for_cert(csr)
               

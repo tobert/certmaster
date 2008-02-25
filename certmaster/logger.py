@@ -14,8 +14,8 @@
 
 
 import logging
-from certmaster.config import read_config
-from certmaster.commonconfig import CertmasterConfig
+from config import read_config
+from commonconfig import CMConfig
 
 
 # from the comments in http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/66531
@@ -33,7 +33,7 @@ class Logger(Singleton):
 
     def __init__(self, logfilepath ="/var/log/certmaster/certmaster.log"):
         config_file = '/etc/certmaster/minion.conf'
-        self.config = read_config(config_file, CertMasterConfig)    
+        self.config = read_config(config_file, CMConfig)    
         self.loglevel = logging._levelNames[self.config.log_level]
         self._setup_logging()
         if self._no_handlers:

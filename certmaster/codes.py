@@ -18,6 +18,8 @@ import exceptions
 class CertMasterException(exceptions.Exception):
     pass
 
+class CMException(CertMasterException):
+    pass
 
 class InvalidMethodException(CertMasterException):
     pass
