@@ -87,11 +87,15 @@ def get_hostname(talk_to_certmaster=True):
     #      for the certmaster for now
     hostname = None
     hostname = socket.gethostname()
+    # print "DEBUG: HOSTNAME TRY1: %s" % hostname
     try:
         ip = socket.gethostbyname(hostname)
+        # print "DEBUG: IP TRY2: %s" % ip
     except:
+        # print "DEBUG: ERROR: returning"
         return hostname
     if ip != "127.0.0.1":
+        # print "DEBUG: ERROR: returning 2"
         return hostname
 
     if talk_to_certmaster:
@@ -106,15 +110,21 @@ def get_hostname(talk_to_certmaster=True):
             s.settimeout(5)
             s.connect((server, port))
             (intf, port) = s.getsockname()
-            hostname = socket.gethostbyaddr(intf)[0]
+            remote_hostname = socket.gethostbyaddr(intf)[0]
+            if remote_hostname != "localhost":
+               hostname = remote_hostname
+               # print "DEBUG: HOSTNAME FROM CERTMASTER == %s" % hostname
             s.close()
         except:
             s.close()
             raise
 
+    # print "DEBUG: final hostname=%s" % hostname
     return hostname
     
 
+# FIXME: move to requestor module and also create a verbose mode
+# prints to the screen for usage by /usr/bin/certmaster-request
 
 def create_minion_keys():
     # FIXME: paths should not be hard coded here, move to settings universally
@@ -122,9 +132,9 @@ def create_minion_keys():
     config = read_config(config_file, MinionConfig)
     cert_dir = config.cert_dir
     master_uri = 'http://%s:51235/' % config.certmaster
-    print "DEBUG: acquiring hostname"
+    # print "DEBUG: acquiring hostname"
     hn = get_hostname()
-    print "DEBUG: hostname = %s\n" % hn
+    # print "DEBUG: hostname = %s\n" % hn
 
     if hn is None:
         raise codes.CMException("Could not determine a hostname other than localhost")
@@ -136,7 +146,7 @@ def create_minion_keys():
 
 
     if os.path.exists(cert_file) and os.path.exists(ca_cert_file):
-        print "DEBUG: err, no cert_file"
+        # print "DEBUG: err, no cert_file"
         return
 
     keypair = None
@@ -157,7 +167,7 @@ def create_minion_keys():
     log = logger.Logger().logger
     while not result:
         try:
-            print "DEBUG: submitting CSR to certmaster: %s" % master_uri
+            # print "DEBUG: submitting CSR to certmaster: %s" % master_uri
             log.debug("submitting CSR to certmaster %s" % master_uri)
             result, cert_string, ca_cert_string = submit_csr_to_master(csr_file, master_uri)
         except socket.gaierror, e:
@@ -165,13 +175,13 @@ def create_minion_keys():
 
         # logging here would be nice
         if not result:
-            print "DEBUG: no response from certmaster, sleeping 10 seconds"
+            # print "DEBUG: no response from certmaster, sleeping 10 seconds"
             log.warning("no response from certmaster %s, sleeping 10 seconds" % master_uri)
             time.sleep(10)
 
 
     if result:
-        print "DEBUG: recieved certificate from certmaster"
+        # print "DEBUG: recieved certificate from certmaster"
         log.debug("received certificate from certmaster %s, storing" % master_uri)
         cert_fd = os.open(cert_file, os.O_RDWR|os.O_CREAT, 0644)
         os.write(cert_fd, cert_string)
@@ -192,6 +202,6 @@ def submit_csr_to_master(csr_file, master_uri):
     csr = fo.read()
     s = xmlrpclib.ServerProxy(master_uri)
 
-    print "DEBUG: waiting for cert"
+    # print "DEBUG: waiting for cert"
     return s.wait_for_cert(csr)
               
