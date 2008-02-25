@@ -67,7 +67,6 @@ rm -fr $RPM_BUILD_ROOT
 %{python_sitelib}/certmaster/*.py*
 %dir /var/log/certmaster
 %dir /var/lib/certmaster
-%dir /var/lib/certmaster/certmaster
 %doc AUTHORS README LICENSE
 %{_mandir}/man1/*.1.gz
 

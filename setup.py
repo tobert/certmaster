@@ -17,7 +17,7 @@ if __name__ == "__main__":
         etcpath    = "/etc/%s" % NAME
         initpath   = "/etc/init.d/"
         logpath    = "/var/log/%s/" % NAME
-	certdir    = "/var/lib/%s/certmaster" % NAME
+	certdir    = "/var/lib/%s/" % NAME
         pkipath    = "/etc/pki/%s" % NAME
         rotpath    = "/etc/logrotate.d"
         aclpath    = "%s/minion-acl.d" % etcpath
