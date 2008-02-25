@@ -74,11 +74,9 @@ rm -fr $RPM_BUILD_ROOT
 %post
 # for suse 
 if [ -x /usr/lib/lsb/install_initd ]; then
-  /usr/lib/lsb/install_initd /etc/init.d/certmasterd
   /usr/lib/lsb/install_initd /etc/init.d/certmaster
 # for red hat distros
 elif [ -x /sbin/chkconfig ]; then
-  /sbin/chkconfig --add certmasterd
   /sbin/chkconfig --add certmaster
 # or, the old fashioned way
 else
@@ -93,22 +91,21 @@ exit 0
 
 %preun
 if [ "$1" = 0 ] ; then
-  /etc/init.d/certmasterd stop  > /dev/null 2>&1
   /etc/init.d/certmaster stop  > /dev/null 2>&1
   if [ -x /usr/lib/lsb/remove_initd ]; then
-    /usr/lib/lsb/remove_initd /etc/init.d/certmasterd
     /usr/lib/lsb/remove_initd /etc/init.d/certmaster
   elif [ -x /sbin/chkconfig ]; then
-    /sbin/chkconfig --del certmasterd
     /sbin/chkconfig --del certmaster
   else
-    rm -f /etc/rc.d/rc?.d/???certmasterd
     rm -f /etc/rc.d/rc?.d/???certmaster
   fi
 fi
 
 
 %changelog
+* Mon Feb 25 2008 Adrian Likins <alikins@redhat.com> - 0.1-1
+- remove certmasterd references
+
 * Thu Feb 7 2008 Michael DeHaan <mdehaan@redhat.com> - 0.1-1
 - initial version, split off from func project, WIP
 
