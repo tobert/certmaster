@@ -75,7 +75,7 @@ def is_error(result):
         return True
     return False
 
-def get_hostname():
+def get_hostname(talk_to_certmaster=True):
     """
     "localhost" is a lame hostname to use for a key, so try to get
     a more meaningful hostname. We do this by connecting to the certmaster
@@ -94,23 +94,23 @@ def get_hostname():
     if ip != "127.0.0.1":
         return hostname
 
+    if talk_to_certmaster:
+        config_file = '/etc/certmaster/minion.conf'
+        config = read_config(config_file, MinionConfig)
 
-    config_file = '/etc/certmaster/minion.conf'
-    config = read_config(config_file, MinionConfig)
+        server = config.certmaster
+        port = 51235
 
-    server = config.certmaster
-    port = 51235
-
-    try:
-        s = socket.socket()
-        s.settimeout(5)
-        s.connect((server, port))
-        (intf, port) = s.getsockname()
-        hostname = socket.gethostbyaddr(intf)[0]
-        s.close()
-    except:
-        s.close()
-        raise
+        try:
+            s = socket.socket()
+            s.settimeout(5)
+            s.connect((server, port))
+            (intf, port) = s.getsockname()
+            hostname = socket.gethostbyaddr(intf)[0]
+            s.close()
+        except:
+            s.close()
+            raise
 
     return hostname
     

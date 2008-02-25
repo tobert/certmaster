@@ -39,7 +39,7 @@ class CertMaster(object):
     def __init__(self, conf_file=CERTMASTER_CONFIG):
         self.cfg = read_config(conf_file, CMConfig)
 
-        usename = utils.get_hostname()
+        usename = utils.get_hostname(talk_to_certmaster=False)
 
         mycn = '%s-CA-KEY' % usename
         self.ca_key_file = '%s/funcmaster.key' % self.cfg.cadir
