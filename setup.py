@@ -36,8 +36,6 @@ if __name__ == "__main__":
                 package_dir = {"%s" % NAME: "%s" % NAME
                 },
 		packages = ["%s" % NAME,
-	        	    "%s/minion" % NAME,
-			    "%s/overlord" % NAME,
                 ],
                 data_files = [(initpath, ["init-scripts/certmaster"]),
                               (etcpath,  ["etc/minion.conf"]),

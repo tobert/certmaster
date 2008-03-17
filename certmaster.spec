@@ -60,10 +60,6 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) /etc/certmaster/certmaster.conf
 %config(noreplace) /etc/logrotate.d/certmaster_rotate
 %dir %{python_sitelib}/certmaster
-%dir %{python_sitelib}/certmaster/minion
-%dir %{python_sitelib}/certmaster/overlord
-%{python_sitelib}/certmaster/minion/*.py*
-%{python_sitelib}/certmaster/overlord/*.py*
 %{python_sitelib}/certmaster/*.py*
 %dir /var/log/certmaster
 %dir /var/lib/certmaster
@@ -103,6 +99,9 @@ fi
 
 
 %changelog
+* Mon March 17 2008 Adrian Likins <alikins@redhat.com> - 0.1-2
+- removed unused minion/ and overlord/ dirs
+
 * Mon Feb 25 2008 Adrian Likins <alikins@redhat.com> - 0.1-1
 - remove certmasterd references
 
