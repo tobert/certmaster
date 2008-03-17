@@ -99,7 +99,7 @@ fi
 
 
 %changelog
-* Mon March 17 2008 Adrian Likins <alikins@redhat.com> - 0.1-2
+* Mon Mar 17 2008 Adrian Likins <alikins@redhat.com> - 0.1-2
 - removed unused minion/ and overlord/ dirs
 
 * Mon Feb 25 2008 Adrian Likins <alikins@redhat.com> - 0.1-1

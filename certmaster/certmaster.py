@@ -48,7 +48,7 @@ class CertMaster(object):
         self.ca_cert_file = '%s/certmaster.crt' % self.cfg.cadir
 
         self.logger = logger.Logger().logger
-        self.audit_logger = logger.AuditLogger().logger
+        self.audit_logger = logger.AuditLogger()
 
         try:
             if not os.path.exists(self.cfg.cadir):
@@ -77,7 +77,7 @@ class CertMaster(object):
         if method == 'trait_names' or method == '_getAttributeNames':
             return self.handlers.keys()
         
-#        ip = self.client_address
+#        ip = self._this_request
 #        print ip
 
 #        self.audit_logger.log_call(ip, method, params)
@@ -229,10 +229,22 @@ class CertMaster(object):
         return certfile
         
 
+# not used yet, trying to figure out a way to get the client ip addr to log -akl
+class CertmasterXMLRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
+    def do_POST(self):
+        self.server._this_request = (self.request, self.client_address)
+        try:
+            SimpleXMLRPCServer.SimpleXMLRPCRequestHandler.do_POST(self)
+        except socket.timeout:
+            pass
+        except (socket.error, OpenSSL.SSL.SysCallError), e:
+            print "Error (%s): socket error - '%s'" % (self.client_address, e)
+
+
 class CertmasterXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
-    def __init__(self, args):
+    def __init__(self, addr):
         self.allow_reuse_address = True
-        SimpleXMLRPCServer.SimpleXMLRPCServer.__init__(self, args)
+        SimpleXMLRPCServer.SimpleXMLRPCServer.__init__(self, addr)
         
 
 def serve(xmlrpcinstance):
@@ -241,11 +253,12 @@ def serve(xmlrpcinstance):
     Code for starting the XMLRPC service.
     """
 
+
     server = CertmasterXMLRPCServer((xmlrpcinstance.cfg.listen_addr, CERTMASTER_LISTEN_PORT))
     server.logRequests = 0 # don't print stuff to console
     server.register_instance(xmlrpcinstance)
     xmlrpcinstance.logger.info("certmaster started")
-    xmlrpcinstance.audit_logger.info("certmaster started")
+    xmlrpcinstance.audit_logger.logger.info("certmaster started")
     server.serve_forever()
 
 

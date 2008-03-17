@@ -40,7 +40,7 @@ class Logger(Singleton):
             self._setup_handlers(logfilepath=logfilepath)
         
     def _setup_logging(self):
-        self.logger = logging.getLogger("svc")
+        self.logger = logging.getLogger("certmaster")
 
     def _setup_handlers(self, logfilepath="/var/log/certmaster/certmaster.log"):
         handler = logging.FileHandler(logfilepath, "a")
@@ -54,6 +54,7 @@ class Logger(Singleton):
 class AuditLogger(Singleton):
     _no_handlers = True
     def __init__(self, logfilepath = "/var/log/certmaster/audit.log"):
+        self.logfilepath = logfilepath
         self.loglevel = logging.INFO
         self._setup_logging()
         if self._no_handlers:
@@ -65,7 +66,7 @@ class AuditLogger(Singleton):
 
 
     def _setup_logging(self):
-        self.logger = logging.getLogger("audit")
+        self.logger = logging.getLogger("certmaster-audit")
 
     def _setup_handlers(self, logfilepath="/var/log/certmaster/audit.log"):
         handler = logging.FileHandler(logfilepath, "a")
