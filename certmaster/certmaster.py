@@ -28,6 +28,9 @@ import exceptions
 import certs
 import codes
 import utils
+
+import logger
+
 from config import read_config
 from commonconfig import CMConfig
 
@@ -43,6 +46,10 @@ class CertMaster(object):
         mycn = '%s-CA-KEY' % usename
         self.ca_key_file = '%s/certmaster.key' % self.cfg.cadir
         self.ca_cert_file = '%s/certmaster.crt' % self.cfg.cadir
+
+        self.logger = logger.Logger().logger
+        self.audit_logger = logger.AuditLogger().logger
+
         try:
             if not os.path.exists(self.cfg.cadir):
                 os.makedirs(self.cfg.cadir)
@@ -70,9 +77,15 @@ class CertMaster(object):
         if method == 'trait_names' or method == '_getAttributeNames':
             return self.handlers.keys()
         
+#        ip = self.client_address
+#        print ip
+
+#        self.audit_logger.log_call(ip, method, params)
+
         if method in self.handlers.keys():
             return self.handlers[method](*params)
         else:
+            self.logger.info("Unhandled method call for method: %s " % method)
             raise codes.InvalidMethodException
     
     def _sanitize_cn(self, commonname):
@@ -95,6 +108,8 @@ class CertMaster(object):
             
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
         
+
+        self.logger.info("%s requested signing of cert %s" % (requesting_host,csrreq.get_subject().CN))
         # get rid of dodgy characters in the filename we're about to make
         
         certfile = '%s/%s.cert' % (self.cfg.certroot, requesting_host)
@@ -112,6 +127,7 @@ class CertMaster(object):
             newsha.update(csrbuf)
             newdig = newsha.hexdigest()
             if not newdig == olddig:
+                self.logger.info("A cert for %s already exists and does not match the requesting cert" % (requesting_host))
                 # XXX raise a proper fault
                 return False, '', ''
 
@@ -132,6 +148,7 @@ class CertMaster(object):
             cert = certs.retrieve_cert_from_file(cert_fn)            
             cert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
             cacert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, self.cacert)
+            self.logger.info("cert for %s was autosigned" % (requesting_host))
             return True, cert_buf, cacert_buf
         
         else:
@@ -140,6 +157,7 @@ class CertMaster(object):
             destfo.write(crypto.dump_certificate_request(crypto.FILETYPE_PEM, csrreq))
             destfo.close()
             del destfo
+            self.logger.info("cert for %s created and ready to be signed" % (requesting_host))
             return False, '', ''
 
         return False, '', ''
@@ -167,6 +185,7 @@ class CertMaster(object):
             return
         for fn in csrs + certs:
             print 'Cleaning out %s for host matching %s' % (fn, hn)
+            self.logger.info('Cleaning out %s for host matching %s' % (fn, hn))
             os.unlink(fn)         
             
     def sign_this_csr(self, csr):
@@ -191,6 +210,7 @@ class CertMaster(object):
             try:
                 csrreq = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr_buf)                
             except crypto.Error, e:
+                self.logger.info("Unable to sign %s: Bad CSR" % (csr))
                 raise exceptions.Exception("Bad CSR: %s" % csr)
                 
         else: # assume we got a bare csr req
@@ -224,6 +244,8 @@ def serve(xmlrpcinstance):
     server = CertmasterXMLRPCServer((xmlrpcinstance.cfg.listen_addr, CERTMASTER_LISTEN_PORT))
     server.logRequests = 0 # don't print stuff to console
     server.register_instance(xmlrpcinstance)
+    xmlrpcinstance.logger.info("certmaster started")
+    xmlrpcinstance.audit_logger.info("certmaster started")
     server.serve_forever()
 
 
