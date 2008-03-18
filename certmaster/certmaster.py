@@ -72,15 +72,12 @@ class CertMaster(object):
         self.handlers = {
                  'wait_for_cert': self.wait_for_cert,
                  }
+
         
     def _dispatch(self, method, params):
         if method == 'trait_names' or method == '_getAttributeNames':
             return self.handlers.keys()
-        
-#        ip = self._this_request
-#        print ip
 
-#        self.audit_logger.log_call(ip, method, params)
 
         if method in self.handlers.keys():
             return self.handlers[method](*params)
@@ -117,6 +114,7 @@ class CertMaster(object):
 
         # check for old csr on disk
         # if we have it - compare the two - if they are not the same - raise a fault
+        self.logger.debug("csrfile: %s  certfile: %s" % (csrfile, certfile))
         if os.path.exists(csrfile):
             oldfo = open(csrfile)
             oldcsrbuf = oldfo.read()
@@ -129,7 +127,8 @@ class CertMaster(object):
             if not newdig == olddig:
                 self.logger.info("A cert for %s already exists and does not match the requesting cert" % (requesting_host))
                 # XXX raise a proper fault
-                return False, '', ''
+            return False, '', ''
+        
 
         # look for a cert:
         # if we have it, then return True, etc, etc
@@ -229,16 +228,6 @@ class CertMaster(object):
         return certfile
         
 
-# not used yet, trying to figure out a way to get the client ip addr to log -akl
-class CertmasterXMLRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
-    def do_POST(self):
-        self.server._this_request = (self.request, self.client_address)
-        try:
-            SimpleXMLRPCServer.SimpleXMLRPCRequestHandler.do_POST(self)
-        except socket.timeout:
-            pass
-        except (socket.error, OpenSSL.SSL.SysCallError), e:
-            print "Error (%s): socket error - '%s'" % (self.client_address, e)
 
 
 class CertmasterXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
