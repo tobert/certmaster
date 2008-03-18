@@ -182,7 +182,7 @@ def create_minion_keys():
 
     if result:
         # print "DEBUG: recieved certificate from certmaster"
-        log.debug("received certificate from certmaster %s, storing" % master_uri)
+        log.debug("received certificate from certmaster %s, storing to %s" % (master_uri, cert_file))
         cert_fd = os.open(cert_file, os.O_RDWR|os.O_CREAT, 0644)
         os.write(cert_fd, cert_string)
         os.close(cert_fd)
