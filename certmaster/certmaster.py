@@ -115,6 +115,7 @@ class CertMaster(object):
         # check for old csr on disk
         # if we have it - compare the two - if they are not the same - raise a fault
         self.logger.debug("csrfile: %s  certfile: %s" % (csrfile, certfile))
+   
         if os.path.exists(csrfile):
             oldfo = open(csrfile)
             oldcsrbuf = oldfo.read()
@@ -214,14 +215,20 @@ class CertMaster(object):
                 
         else: # assume we got a bare csr req
             csrreq = csr
-        requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
-        
+
+
+        requesting_host = self._sanitize_cn(csrreq.get_subject().CN)        
         certfile = '%s/%s.cert' % (self.cfg.certroot, requesting_host)
+        self.logger.info("Signing for csr %s requested" % certfile)
         thiscert = certs.create_slave_certificate(csrreq, self.cakey, self.cacert, self.cfg.cadir)
+
         destfo = open(certfile, 'w')
         destfo.write(crypto.dump_certificate(crypto.FILETYPE_PEM, thiscert))
         destfo.close()
         del destfo
+
+
+        self.logger.info("csr %s signed" % (certfile)) 
         if csr_unlink_file and os.path.exists(csr_unlink_file):
             os.unlink(csr_unlink_file)
             
