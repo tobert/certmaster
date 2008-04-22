@@ -24,6 +24,7 @@ import certs
 from config import read_config
 from commonconfig import MinionConfig
 import logger
+import sub_process
 
 # FIXME: module needs better pydoc
 
@@ -108,6 +109,7 @@ def get_hostname(talk_to_certmaster=True):
         try:
             s = socket.socket()
             s.settimeout(5)
+	    print "server, port", server, port
             s.connect((server, port))
             (intf, port) = s.getsockname()
             remote_hostname = socket.gethostbyaddr(intf)[0]
@@ -190,6 +192,37 @@ def create_minion_keys():
         ca_cert_fd = os.open(ca_cert_file, os.O_RDWR|os.O_CREAT, 0644)
         os.write(ca_cert_fd, ca_cert_string)
         os.close(ca_cert_fd)
+
+def run_triggers(ref, globber):
+    """
+    Runs all the trigger scripts in a given directory.
+    ref can be a certmaster object, if not None, the name will be passed
+    to the script.  If ref is None, the script will be called with
+    no argumenets.  Globber is a wildcard expression indicating which
+    triggers to run.  Example:  "/var/lib/certmaster/triggers/blah/*"
+    """
+
+    log = logger.Logger().logger
+    triggers = glob.glob(globber)
+    triggers.sort()
+    for file in triggers:
+        log.debug("Executing trigger: %s" % file)
+        try:
+            if file.find(".rpm") != -1:
+                # skip .rpmnew files that may have been installed
+                # in the triggers directory
+                continue
+            if ref:
+                rc = sub_process.call([file, ref.name], shell=False)
+            else:
+                rc = sub_process.call([file], shell=False)
+        except:
+            log.warning("Warning: failed to execute trigger: %s" % file)
+            continue
+
+        if rc != 0:
+            raise codes.CMException, "certmaster trigger failed: %(file)s returns %(code)d" % { "file" : file, "code" : rc }
+
 
 def submit_csr_to_master(csr_file, master_uri):
     """"

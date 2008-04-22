@@ -18,6 +18,7 @@ if __name__ == "__main__":
         initpath   = "/etc/init.d/"
         logpath    = "/var/log/%s/" % NAME
 	certdir    = "/var/lib/%s/" % NAME
+	trigpath   = "/var/lib/%s/triggers/"% NAME
         pkipath    = "/etc/pki/%s" % NAME
         rotpath    = "/etc/logrotate.d"
         aclpath    = "%s/minion-acl.d" % etcpath
@@ -48,7 +49,13 @@ if __name__ == "__main__":
 			      (certdir,  []),
 			      (etcpath,  []),
 			      (pkipath,  []),
-			      (aclpath,  [])
+			      (aclpath,  []),
+			      ("%s/sign/pre/"     % trigpath, []),
+                              ("%s/sign/post/"    % trigpath, []),
+                              ("%s/remove/pre/"   % trigpath, []),
+                              ("%s/remove/post/"  % trigpath, []),
+                              ("%s/request/pre/"  % trigpath, []),
+                              ("%s/request/post/" % trigpath, []),
                 ],
                 description = SHORT_DESC,
                 long_description = LONG_DESC

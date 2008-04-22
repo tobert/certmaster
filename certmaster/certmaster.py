@@ -90,7 +90,7 @@ class CertMaster(object):
         commonname = commonname.replace('\\', '')       
         return commonname
     
-    def wait_for_cert(self, csrbuf):
+    def wait_for_cert(self, csrbuf, with_triggers=True):
         """
            takes csr as a string
            returns True, caller_cert, ca_cert
@@ -104,7 +104,9 @@ class CertMaster(object):
             return False, '', ''
             
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
-        
+
+        if with_triggers:
+            self._run_triggers(None, '/var/lib/certmaster/triggers/request/pre/*') 
 
         self.logger.info("%s requested signing of cert %s" % (requesting_host,csrreq.get_subject().CN))
         # get rid of dodgy characters in the filename we're about to make
@@ -137,6 +139,8 @@ class CertMaster(object):
             slavecert = certs.retrieve_cert_from_file(certfile)
             cert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, slavecert)
             cacert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, self.cacert)
+            if with_triggers:
+                self._run_triggers(None,'/var/lib/certmaster/triggers/request/post/*')
             return True, cert_buf, cacert_buf
         
         # if we don't have a cert then:
@@ -149,6 +153,8 @@ class CertMaster(object):
             cert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
             cacert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, self.cacert)
             self.logger.info("cert for %s was autosigned" % (requesting_host))
+            if with_triggers:
+                self._run_triggers(None,'/var/lib/certmaster/triggers/request/post/*')
             return True, cert_buf, cacert_buf
         
         else:
@@ -158,6 +164,8 @@ class CertMaster(object):
             destfo.close()
             del destfo
             self.logger.info("cert for %s created and ready to be signed" % (requesting_host))
+            if with_triggers:
+                self._run_triggers(None,'/var/lib/certmaster/triggers/request/post/*')
             return False, '', ''
 
         return False, '', ''
@@ -172,7 +180,7 @@ class CertMaster(object):
             hosts.append(hn)
         return hosts
    
-    def remove_this_cert(self, hn):
+    def remove_this_cert(self, hn, with_triggers=True):
         """ removes cert for hostname using unlink """
         cm = self
         csrglob = '%s/%s.csr' % (cm.cfg.csrroot, hn)
@@ -183,12 +191,16 @@ class CertMaster(object):
             # FIXME: should be an exception?
             print 'No match for %s to clean up' % hn
             return
+        if with_triggers:
+            self._run_triggers(None,'/var/lib/certmaster/triggers/remove/pre/*')
         for fn in csrs + certs:
             print 'Cleaning out %s for host matching %s' % (fn, hn)
             self.logger.info('Cleaning out %s for host matching %s' % (fn, hn))
-            os.unlink(fn)         
+            os.unlink(fn)
+        if with_triggers:
+            self._run_triggers(None,'/var/lib/certmaster/triggers/remove/post/*')
             
-    def sign_this_csr(self, csr):
+    def sign_this_csr(self, csr, with_triggers=True):
         """returns the path to the signed cert file"""
         csr_unlink_file = None
 
@@ -216,6 +228,9 @@ class CertMaster(object):
         else: # assume we got a bare csr req
             csrreq = csr
 
+        if with_triggers:
+            self._run_triggers(None,'/var/lib/certmaster/triggers/sign/pre/*')
+
 
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)        
         certfile = '%s/%s.cert' % (self.cfg.certroot, requesting_host)
@@ -228,13 +243,18 @@ class CertMaster(object):
         del destfo
 
 
-        self.logger.info("csr %s signed" % (certfile)) 
+        self.logger.info("csr %s signed" % (certfile))
+        if with_triggers:
+            self._run_triggers(None,'/var/lib/certmaster/triggers/sign/post/*')
+
+        
         if csr_unlink_file and os.path.exists(csr_unlink_file):
             os.unlink(csr_unlink_file)
             
         return certfile
         
-
+    def _run_triggers(self, ref, globber):
+        return utils.run_triggers(ref, globber)
 
 
 class CertmasterXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
