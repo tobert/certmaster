@@ -252,7 +252,47 @@ class CertMaster(object):
             os.unlink(csr_unlink_file)
             
         return certfile
+
+    # return a list of already signed certs
+    def get_signed_certs(self, hostglobs=None):
+        certglob = "%s/*.cert" % (self.cfg.certroot)
+
+        certs = []
+        globs = "*"
+        if hostglobs:
+            globs = hostglobs
+
+        for hostglob in globs:
+            certglob = "%s/%s.cert" % (self.cfg.certroot, hostglob)
+            certs = certs + glob.glob(certglob)
+
+        signed_certs = []
+        for cert in certs:
+            # just want the hostname, so strip off path and ext
+            signed_certs.append(os.path.basename(cert).split(".cert", 1)[0])
+
+        return signed_certs
+
+    # return a list of the cert hash string we use to identify systems
+    def get_cert_hashes(self, hostglobs=None):
+        certglob = "%s/*.cert" % (self.cfg.certroot)
+
+        certfiles = []
+        globs = "*"
+        if hostglobs:
+            globs = hostglobs
+
+        for hostglob in globs:
+            certglob = "%s/%s.cert" % (self.cfg.certroot, hostglob)
+            certfiles = certfiles + glob.glob(certglob)
         
+        cert_hashes = []
+        for certfile in certfiles:
+            cert = certs.retrieve_cert_from_file(certfile)
+            cert_hashes.append("%s-%s" % (cert.get_subject().CN, cert.subject_name_hash()))
+            
+        return cert_hashes
+
     def _run_triggers(self, ref, globber):
         return utils.run_triggers(ref, globber)
 

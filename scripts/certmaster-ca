@@ -31,11 +31,17 @@ def parseargs(args):
           help='sign requests of hosts specified')
     parser.add_option('-c', '--clean', default=False, action="store_true",
           help="clean out all certs or csrs for the hosts specified")
+    parser.add_option("", "--list-signed", default=False, action="store_true",
+          help='list all signed certs')
+    parser.add_option("", "--list-cert-hash", default=False, action="store_true",
+          help="list the cert hash for signed certs")
           
     (opts, args) = parser.parse_args()
     
     
-    if not opts.list and not opts.sign and not opts.clean:
+    # gotta be a better way...
+    if not opts.list and not opts.sign and not opts.clean \
+            and not opts.list_signed and not opts.list_cert_hash:
         parser.print_help()
         sys.exit(1)
             
@@ -86,6 +92,30 @@ def main(args):
         for hn in args:
             cm.remove_this_cert(hn)
         
+        return 0
+
+    if opts.list_signed:
+        hostglobs = ["*"]
+        if args:
+            hostglobs = args
+
+        signed_certs = cm.get_signed_certs(args)
+
+        for i in signed_certs:
+            print i
+            
+        return 0
+        
+    if opts.list_cert_hash:
+        hostglobs = ["*"]
+        if args:
+            hostglobs = args
+            
+        cert_hashes = cm.get_cert_hashes(hostglobs)
+
+        for i in cert_hashes:
+            print i
+            
         return 0
 
 if __name__ == "__main__":
