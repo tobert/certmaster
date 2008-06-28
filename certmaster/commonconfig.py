@@ -23,6 +23,7 @@ class CMConfig(BaseConfig):
     cert_dir = Option('/etc/pki/certmaster')
     certroot =  Option('/var/lib/certmaster/certmaster/certs')
     csrroot = Option('/var/lib/certmaster/certmaster/csrs')
+    cert_extension = Option('cert')
     autosign = BoolOption(False)
 
 class MinionConfig(BaseConfig):
