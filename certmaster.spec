@@ -105,15 +105,19 @@ fi
 
 
 %changelog
-* Tue Apr 15 2008 Steve Salevan <ssalevan@redhat.com> - 0.1-3
+* Tue Apr 15 2008 Michael DeHaan <mdehaan@redhat.com> - 0.20-1
+- new release
+- fix changelog versions
+
+* Tue Apr 15 2008 Steve Salevan <ssalevan@redhat.com> - 0.19-3
 - added in trigger directories
 
-* Mon Mar 17 2008 Adrian Likins <alikins@redhat.com> - 0.1-2
+* Mon Mar 17 2008 Adrian Likins <alikins@redhat.com> - 0.19-2
 - removed unused minion/ and overlord/ dirs
 
-* Mon Feb 25 2008 Adrian Likins <alikins@redhat.com> - 0.1-1
+* Mon Feb 25 2008 Adrian Likins <alikins@redhat.com> - 0.19-1
 - remove certmasterd references
 
-* Thu Feb 7 2008 Michael DeHaan <mdehaan@redhat.com> - 0.1-1
+* Thu Feb 7 2008 Michael DeHaan <mdehaan@redhat.com> - 0.18-1
 - initial version, split off from func project, WIP
 
