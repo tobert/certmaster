@@ -105,7 +105,7 @@ fi
 
 
 %changelog
-* Mon June 6 2008 Adrian Likins <alikins@redhat.com> - 0.20-2
+* Mon Jun 6 2008 Adrian Likins <alikins@redhat.com> - 0.20-2
 - fix fedora bug #441283 - typo in postinstall scriptlet
   (the init.d symlinks for runlevels 1 and 6 were created wrong)
 
