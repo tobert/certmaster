@@ -109,7 +109,7 @@ def get_hostname(talk_to_certmaster=True):
         try:
             s = socket.socket()
             s.settimeout(5)
-	    print "server, port", server, port
+	    # print "server, port", server, port
             s.connect((server, port))
             (intf, port) = s.getsockname()
             remote_hostname = socket.gethostbyaddr(intf)[0]
