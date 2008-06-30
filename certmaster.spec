@@ -86,7 +86,7 @@ else
         ln -sf /etc/init.d/certmaster /etc/rc.d/rc${i}.d/S99certmaster
    done
    for i in 1 6; do
-        ln -sf /etc/init.d/certmaster /etc/rc.d/rc${i}.d/S99certmaster
+        ln -sf /etc/init.d/certmaster /etc/rc.d/rc${i}.d/k01certmaster
    done
 fi
 exit 0
@@ -105,6 +105,10 @@ fi
 
 
 %changelog
+* Mon June 6 2008 Adrian Likins <alikins@redhat.com> - 0.20-2
+- fix fedora bug #441283 - typo in postinstall scriptlet
+  (the init.d symlinks for runlevels 1 and 6 were created wrong)
+
 * Tue Apr 15 2008 Michael DeHaan <mdehaan@redhat.com> - 0.20-1
 - new release
 - fix changelog versions
