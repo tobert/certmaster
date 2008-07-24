@@ -44,7 +44,7 @@ def daemonize(pidfile=None):
     Writes the new PID to the provided file name if not None.
     """
 
-    print pidfile
+#    print pidfile
     pid = os.fork()
     if pid > 0:
         sys.exit(0)
@@ -57,12 +57,15 @@ def daemonize(pidfile=None):
             open(pidfile, "w").write(str(pid))
         sys.exit(0)
 
+
 def nice_exception(etype, evalue, etb):
-    # FIXME: I believe we can remove this function
     etype = str(etype)
-    lefti = etype.index("'") + 1
-    righti = etype.rindex("'")
-    nicetype = etype[lefti:righti]
+    try:
+        lefti = etype.index("'") + 1
+        righti = etype.rindex("'")
+        nicetype = etype[lefti:righti]
+    except:
+        nicetype = etype
     nicestack = string.join(traceback.format_list(traceback.extract_tb(etb)))
     return [ REMOTE_ERROR, nicetype, str(evalue), nicestack ] 
 
