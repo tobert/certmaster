@@ -48,6 +48,10 @@ def daemonize(pidfile=None):
     pid = os.fork()
     if pid > 0:
         sys.exit(0)
+    os.close(0)
+    os.close(1)
+    os.close(2)
+    os.cwd("/")
     os.setsid()
     os.umask(0)
     pid = os.fork()
