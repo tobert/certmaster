@@ -32,6 +32,14 @@ import sub_process
 # FIXME: can remove this constant?
 REMOTE_ERROR = "REMOTE_ERROR"
 
+# The standard I/O file descriptors are redirected to /dev/null by default.
+if (hasattr(os, "devnull")):
+    REDIRECT_TO = os.devnull
+else:
+    REDIRECT_TO = "/dev/null"
+
+
+
 
 def trace_me():
     x = traceback.extract_stack()
@@ -44,17 +52,25 @@ def daemonize(pidfile=None):
     Writes the new PID to the provided file name if not None.
     """
 
-#    print pidfile
     pid = os.fork()
     if pid > 0:
         sys.exit(0)
-    os.close(0)
-    os.close(1)
-    os.close(2)
-    os.cwd("/")
+    os.chdir("/")
     os.setsid()
     os.umask(0)
     pid = os.fork()
+
+    os.close(0)
+    os.close(1)
+    os.close(2)
+
+    # based on http://code.activestate.com/recipes/278731/
+    os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
+
+    os.dup2(0, 1)			# standard output (1)
+    os.dup2(0, 2)			# standard error (2)
+
+
 
     if pid > 0:
         if pidfile is not None:
@@ -116,7 +132,6 @@ def get_hostname(talk_to_certmaster=True):
         try:
             s = socket.socket()
             s.settimeout(5)
-	    # print "server, port", server, port
             s.connect((server, port))
             (intf, port) = s.getsockname()
             remote_hostname = socket.gethostbyaddr(intf)[0]
