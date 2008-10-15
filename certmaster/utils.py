@@ -235,7 +235,7 @@ def run_triggers(ref, globber):
                 # in the triggers directory
                 continue
             if ref:
-                rc = sub_process.call([file, ref.name], shell=False)
+                rc = sub_process.call([file, ref], shell=False)
             else:
                 rc = sub_process.call([file], shell=False)
         except:

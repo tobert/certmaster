@@ -106,7 +106,7 @@ class CertMaster(object):
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
 
         if with_triggers:
-            self._run_triggers(None, '/var/lib/certmaster/triggers/request/pre/*') 
+            self._run_triggers(requesting_host, '/var/lib/certmaster/triggers/request/pre/*') 
 
         self.logger.info("%s requested signing of cert %s" % (requesting_host,csrreq.get_subject().CN))
         # get rid of dodgy characters in the filename we're about to make
@@ -140,7 +140,7 @@ class CertMaster(object):
             cert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, slavecert)
             cacert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, self.cacert)
             if with_triggers:
-                self._run_triggers(None,'/var/lib/certmaster/triggers/request/post/*')
+                self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/request/post/*')
             return True, cert_buf, cacert_buf
         
         # if we don't have a cert then:
@@ -192,13 +192,13 @@ class CertMaster(object):
             print 'No match for %s to clean up' % hn
             return
         if with_triggers:
-            self._run_triggers(None,'/var/lib/certmaster/triggers/remove/pre/*')
+            self._run_triggers(hn,'/var/lib/certmaster/triggers/remove/pre/*')
         for fn in csrs + certs:
             print 'Cleaning out %s for host matching %s' % (fn, hn)
             self.logger.info('Cleaning out %s for host matching %s' % (fn, hn))
             os.unlink(fn)
         if with_triggers:
-            self._run_triggers(None,'/var/lib/certmaster/triggers/remove/post/*')
+            self._run_triggers(hn,'/var/lib/certmaster/triggers/remove/post/*')
             
     def sign_this_csr(self, csr, with_triggers=True):
         """returns the path to the signed cert file"""
@@ -228,8 +228,10 @@ class CertMaster(object):
         else: # assume we got a bare csr req
             csrreq = csr
 
+
+        requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
         if with_triggers:
-            self._run_triggers(None,'/var/lib/certmaster/triggers/sign/pre/*')
+            self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/sign/pre/*')
 
 
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)        
@@ -245,7 +247,7 @@ class CertMaster(object):
 
         self.logger.info("csr %s signed" % (certfile))
         if with_triggers:
-            self._run_triggers(None,'/var/lib/certmaster/triggers/sign/post/*')
+            self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/sign/post/*')
 
         
         if csr_unlink_file and os.path.exists(csr_unlink_file):
