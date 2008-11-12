@@ -127,7 +127,7 @@ def get_hostname(talk_to_certmaster=True):
         config = read_config(config_file, MinionConfig)
 
         server = config.certmaster
-        port = 51235
+        port = config.certmaster_port
 
         try:
             s = socket.socket()
@@ -155,7 +155,7 @@ def create_minion_keys():
     config_file = '/etc/certmaster/minion.conf'
     config = read_config(config_file, MinionConfig)
     cert_dir = config.cert_dir
-    master_uri = 'http://%s:51235/' % config.certmaster
+    master_uri = 'http://%s:%s/' % (config.certmaster, config.certmaster_port)
     # print "DEBUG: acquiring hostname"
     hn = get_hostname()
     # print "DEBUG: hostname = %s\n" % hn

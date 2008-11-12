@@ -312,7 +312,12 @@ def serve(xmlrpcinstance):
     """
 
 
-    server = CertmasterXMLRPCServer((xmlrpcinstance.cfg.listen_addr, CERTMASTER_LISTEN_PORT))
+    config = read_config(CERTMASTER_CONFIG, CMConfig)
+    listen_addr = config.listen_addr
+    listen_port = config.listen_port
+    if listen_port == '':
+        listen_port = CERTMASTER_LISTEN_PORT 
+    server = CertmasterXMLRPCServer((listen_addr,listen_port))
     server.logRequests = 0 # don't print stuff to console
     server.register_instance(xmlrpcinstance)
     xmlrpcinstance.logger.info("certmaster started")

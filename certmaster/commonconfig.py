@@ -19,6 +19,7 @@ from config import BaseConfig, BoolOption, IntOption, Option
 class CMConfig(BaseConfig):
     log_level = Option('INFO')
     listen_addr = Option('')
+    listen_port = IntOption(51235)
     cadir = Option('/etc/pki/certmaster/ca')
     cert_dir = Option('/etc/pki/certmaster')
     certroot =  Option('/var/lib/certmaster/certmaster/certs')
@@ -29,5 +30,6 @@ class CMConfig(BaseConfig):
 class MinionConfig(BaseConfig):
     log_level = Option('INFO')
     certmaster = Option('certmaster')
+    certmaster_port = IntOption(51235)
     cert_dir = Option('/etc/pki/certmaster')
 
