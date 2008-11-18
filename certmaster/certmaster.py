@@ -234,7 +234,6 @@ class CertMaster(object):
             self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/sign/pre/*')
 
 
-        requesting_host = self._sanitize_cn(csrreq.get_subject().CN)        
         certfile = '%s/%s.cert' % (self.cfg.certroot, requesting_host)
         self.logger.info("Signing for csr %s requested" % certfile)
         thiscert = certs.create_slave_certificate(csrreq, self.cakey, self.cacert, self.cfg.cadir)
