@@ -63,10 +63,13 @@ rm -fr $RPM_BUILD_ROOT
 %{python_sitelib}/certmaster/*.py*
 %dir /var/log/certmaster
 %dir /var/lib/certmaster
+%dir /var/lib/certmaster/triggers/sign/
 %dir /var/lib/certmaster/triggers/sign/pre
 %dir /var/lib/certmaster/triggers/sign/post
+%dir /var/lib/certmaster/triggers/request/
 %dir /var/lib/certmaster/triggers/request/pre
 %dir /var/lib/certmaster/triggers/request/post
+%dir /var/lib/certmaster/triggers/remove/
 %dir /var/lib/certmaster/triggers/remove/pre
 %dir /var/lib/certmaster/triggers/remove/post
 %doc AUTHORS README LICENSE
@@ -105,6 +108,9 @@ fi
 
 
 %changelog
+* Mon Dec 12 2008 Adrian Likins <alikins@redhat.com> - 0.24-1
+- add missing dirs as per bz#473633
+
 * Mon Jun 6 2008 Adrian Likins <alikins@redhat.com> - 0.20-2
 - fix fedora bug #441283 - typo in postinstall scriptlet
   (the init.d symlinks for runlevels 1 and 6 were created wrong)
