@@ -63,22 +63,38 @@ fi
 RETVAL=0
 
 start() {
-    echo -n $"Starting certmaster daemon: "
-    START_DAEMON $PROCESS $CONFIG_ARGS
-    RETVAL=$?
-    echo
-    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$SERVICE
-    return $RETVAL
+    if [ -f /etc/debian_version ]; then
+        log_begin_msg "Starting certmaster daemon: "
+        start-stop-daemon --exec $DAEMON --start --quiet -- $CONFIG_ARGS > /dev/null
+        RETVAL=$?
+        log_end_msg $RETVAL
+        return $RETVAL
+    else
+	echo -n $"Starting certmaster daemon: "
+	START_DAEMON $PROCESS $CONFIG_ARGS
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$SERVICE
+	return $RETVAL
+    fi
 }
 
 stop() {
-    echo -n $"Stopping certmaster daemon: "
-    killproc $PROCESS
-    RETVAL=$?
-    echo
-    if [ $RETVAL -eq 0 ]; then
-	rm -f /var/lock/subsys/$SERVICE
-        rm -f /var/run/$SERVICE.pid
+    if [ -f /etc/debian_version ]; then
+        log_daemon_msg "Stopping certmaster daemon" "certmaster"
+        start-stop-daemon --stop --quiet --pidfile /var/run/certmaster.pid --name certmaster
+        RETVAL=$?
+        log_end_msg $RETVAL
+        rm -f /var/run/certmaster.pid
+    else
+	echo -n $"Stopping certmaster daemon: "
+	killproc $PROCESS
+	RETVAL=$?
+	echo
+	if [ $RETVAL -eq 0 ]; then
+	    rm -f /var/lock/subsys/$SERVICE
+            rm -f /var/run/$SERVICE.pid
+	fi
     fi
 }
 
