@@ -14,7 +14,7 @@ all: rpms
 
 
 manpage:
-	pod2man --center="certmaster-request" --release="" ./docs/certmaster-inventory.pod | gzip -c > ./docs/certmaster-request.1.gz
+	pod2man --center="certmaster-request" --release="" ./docs/certmaster-request.pod | gzip -c > ./docs/certmaster-request.1.gz
 	pod2man --center="certmaster" --release="" ./docs/certmaster.pod | gzip -c > ./docs/certmaster.1.gz
 	pod2man --center="certmaster-ca" --release="" ./docs/certmaster-ca.pod | gzip -c > ./docs/certmaster-ca.1.gz
 

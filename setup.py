@@ -26,7 +26,7 @@ if __name__ == "__main__":
                 name="%s" % NAME,
                 version = VERSION,
                 author = "Lots",
-                author_email = "certmaster-list@redhat.com",
+                author_email = "func-list@redhat.com",
                 url = "https://hosted.fedoraproject.org/projects/certmaster/",
                 license = "GPL",
 		scripts = [

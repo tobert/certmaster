@@ -31,6 +31,7 @@ See also the manpages for "certmaster", and "certmaster-ca".
 
 =head1 AUTHOR
 
-Various. See https://fedorahosted.org/func
+Various. See https://fedorahosted.org/func and
+https://fedorahosted.org/certmaster
 
 

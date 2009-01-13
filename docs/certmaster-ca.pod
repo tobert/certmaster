@@ -28,11 +28,11 @@ To configure this, edit /etc/certmaster/certmaster.conf.
 =head1 ADDITONAL RESOURCES
 
 See https://fedorahosted.org/certmaster.  It's a Wiki.
-
+See also https://fedorahosted.org/func
 See also the manpages for "certmaster" and "certmaster-request".
 
 =head1 AUTHOR
 
 Various. See https://fedorahosted.org/certmaster
-
+and https://fedorahosted.org/func
 
