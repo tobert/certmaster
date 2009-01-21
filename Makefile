@@ -1,6 +1,7 @@
 VERSION		= $(shell echo `awk '{ print $$1 }' version`)
 RELEASE		= $(shell echo `awk '{ print $$2 }' version`)
 NEWRELEASE	= $(shell echo $$(($(RELEASE) + 1)))
+PYTHON		= /usr/bin/python
 
 MESSAGESPOT=po/messages.pot
 
@@ -31,7 +32,7 @@ setversion:
 	-echo "$(VERSION) $(RELEASE)" > version
 
 build: clean
-	python setup.py build -f
+	$(PYTHON) setup.py build -f
 
 clean:
 	-rm -f  MANIFEST
@@ -42,7 +43,7 @@ clean:
 	-for d in $(DIRS); do ($(MAKE) -C $$d clean ); done
 
 clean_hard:
-	-rm -rf $(shell python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")/certmaster 
+	-rm -rf $(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")/certmaster 
 
 clean_harder:
 	-rm -rf /etc/pki/certmaster
@@ -53,7 +54,7 @@ clean_hardest: clean_rpms
 
 
 install: build manpage
-	python setup.py install -f
+	$(PYTHON) setup.py install -f
 
 install_hard: clean_hard install
 
@@ -73,7 +74,7 @@ clean_rpms:
 	-rpm -e certmaster
 
 sdist: messages
-	python setup.py sdist
+	$(PYTHON) setup.py sdist
 
 new-rpms: bumprelease rpms
 
