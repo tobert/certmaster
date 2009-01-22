@@ -2,7 +2,7 @@ certmaster -- it hands out SSL certs!
 
 read more at:
 
-https://hosted.fedoraproject.org/projects/certmaster
+https://fedorahosted.org/certmaster/
 
-Source: http://git.fedoraproject.org/git/certmaster.git
+Source: http://git.fedorahosted.org/git/?p=certmaster.git;a=summary
 
