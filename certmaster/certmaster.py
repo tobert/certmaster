@@ -16,7 +16,9 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 # standard modules
 import SimpleXMLRPCServer
+import string
 import sys
+import traceback
 import os
 import os.path
 from OpenSSL import crypto
@@ -323,9 +325,24 @@ def serve(xmlrpcinstance):
     xmlrpcinstance.audit_logger.logger.info("certmaster started")
     server.serve_forever()
 
+def excepthook(exctype, value, tracebackobj):
+    exctype_blurb = "Exception occured: %s" % exctype
+    excvalue_blurb = "Exception value: %s" % value
+    exctb_blurb = "Exception Info:\n%s" % string.join(traceback.format_list(traceback.extract_tb(tracebackobj)))
+
+    print exctype_blurb
+    print excvalue_blurb
+    print exctb_blurb
+
+    log = logger.Logger().logger 
+    log.info(exctype_blurb)
+    log.info(excvalue_blurb)
+    log.info(exctb_blurb)
+
 
 def main(argv):
-    
+   
+    sys.excepthook = excepthook  
     cm = CertMaster('/etc/certmaster/certmaster.conf')
 
     if "daemon" in argv or "--daemon" in argv:
