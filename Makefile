@@ -1,5 +1,5 @@
-VERSION		= $(shell echo `awk '{ print $$1 }' version`)
-RELEASE		= $(shell echo `awk '{ print $$2 }' version`)
+VERSION		= 0.24 
+RELEASE		= 4
 NEWRELEASE	= $(shell echo $$(($(RELEASE) + 1)))
 PYTHON		= /usr/bin/python
 
@@ -23,13 +23,6 @@ messages: certmaster/*.py
 	touch $(MESSAGESPOT)
 	xgettext -k_ -kN_ -o $(MESSAGESPOT) certmaster/*.py
 	sed -i'~' -e 's/SOME DESCRIPTIVE TITLE/certmaster/g' -e 's/YEAR THE PACKAGE'"'"'S COPYRIGHT HOLDER/2007 Red Hat, inc. /g' -e 's/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR/Adrian Likins <alikins@redhat.com>, 2007/g' -e 's/PACKAGE VERSION/certmaster $(VERSION)-$(RELEASE)/g' -e 's/PACKAGE/certmaster/g' $(MESSAGESPOT)
-
-
-bumprelease:	
-	-echo "$(VERSION) $(NEWRELEASE)" > version
-
-setversion: 
-	-echo "$(VERSION) $(RELEASE)" > version
 
 build: clean
 	$(PYTHON) setup.py build -f
@@ -93,7 +86,6 @@ async: install
 rpms: build manpage sdist
 	mkdir -p rpm-build
 	cp dist/*.gz rpm-build/
-	cp version rpm-build/
 	rpmbuild --define "_topdir %(pwd)/rpm-build" \
 	--define "_builddir %{_topdir}" \
 	--define "_rpmdir %{_topdir}" \

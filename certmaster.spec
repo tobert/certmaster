@@ -16,9 +16,8 @@
 
 Summary: Remote certificate distribution framework
 Name: certmaster
-Source1: version
-Version: %(echo `awk '{ print $1 }' %{SOURCE1}`)
-Release: %(echo `awk '{ print $2 }' %{SOURCE1}`)%{?dist}
+Version: 0.24 
+Release: 4%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GPLv2+
 Group: Applications/System
@@ -131,13 +130,16 @@ fi
 
 
 %changelog
+* Wed Feb 18 2009 Adrian Likins <alikins@redhat.com> - 0.24.4
+- remove version file
+
 * Mon Jan 19 2009 Adrian Likins <alikins@redhat.com> - 0.24.4
 - make inclusion of egginfo dependant on having python >= 2.5
 - remove need for patch on rhel3+python2.4 cases (distutils should
   do all the /usr/bin/python renaming now)
 - minor reformatting changes
 
-* Tue Jan 06 2009 Greg Swift <gregswift@gmail.com> - 0.24-3
+* Tue Jan 06 2009 Greg Swift <gregswift@gmail.com> - 0.24-3x1
 - Fixed spec because it was only building in rhel3
 
 * Wed Dec 31 2008 Greg Swift <gregswift@gmail.com> - 0.24-2
