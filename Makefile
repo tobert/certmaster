@@ -1,6 +1,5 @@
-VERSION		= 0.24 
+VERSION		= 0.24
 RELEASE		= 4
-NEWRELEASE	= $(shell echo $$(($(RELEASE) + 1)))
 PYTHON		= /usr/bin/python
 
 MESSAGESPOT=po/messages.pot
