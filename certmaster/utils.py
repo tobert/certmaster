@@ -107,45 +107,17 @@ def get_hostname(talk_to_certmaster=True):
     up the hostname for that. 
     """
     # FIXME: this code ignores http proxies (which granted, we don't
-    #      support elsewhere either. It also hardcodes the port number
-    #      for the certmaster for now
+    #      support elsewhere either. 
     hostname = None
     hostname = socket.gethostname()
     # print "DEBUG: HOSTNAME TRY1: %s" % hostname
     try:
         ip = socket.gethostbyname(hostname)
-        # print "DEBUG: IP TRY2: %s" % ip
     except:
-        # print "DEBUG: ERROR: returning"
         return hostname
     if ip != "127.0.0.1":
-        # print "DEBUG: ERROR: returning 2"
         return hostname
 
-    if talk_to_certmaster:
-        config_file = '/etc/certmaster/minion.conf'
-        config = read_config(config_file, MinionConfig)
-
-        server = config.certmaster
-        port = config.certmaster_port
-
-        try:
-            s = socket.socket()
-            s.settimeout(5)
-            s.connect((server, port))
-            (intf, port) = s.getsockname()
-            remote_hostname = socket.gethostbyaddr(intf)[0]
-            if remote_hostname != "localhost":
-               hostname = remote_hostname
-               # print "DEBUG: HOSTNAME FROM CERTMASTER == %s" % hostname
-            s.close()
-        except:
-            s.close()
-            raise
-
-    # print "DEBUG: final hostname=%s" % hostname
-    return hostname
-    
 
 # FIXME: move to requestor module and also create a verbose mode
 # prints to the screen for usage by /usr/bin/certmaster-request
