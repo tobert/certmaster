@@ -1,0 +1,6 @@
+check process certmaster with pidfile /var/run/certmaster.pid
+    start program = "/etc/init.d/certmaster start"
+    stop  program = "/etc/init.d/certmaster stop"
+    if failed host 127.0.0.1 port 51235 type tcp then restart
+    if 5 restarts within 5 cycles then timeout
+
