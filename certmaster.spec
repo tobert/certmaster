@@ -74,6 +74,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/certmaster
 %{_bindir}/certmaster-request
 %{_bindir}/certmaster-ca
+%{_bindir}/certmaster-sync
 /etc/init.d/certmaster
 %dir %{_sysconfdir}/%{name}
 %dir %{_sysconfdir}/%{name}/minion-acl.d/
@@ -85,6 +86,7 @@ rm -fr $RPM_BUILD_ROOT
 %{python_sitelib}/certmaster/*.py*
 %dir /var/log/certmaster
 %dir /var/lib/certmaster
+%dir /var/lib/certmaster/peers
 %dir /var/lib/certmaster/triggers/sign/
 %dir /var/lib/certmaster/triggers/sign/pre
 %dir /var/lib/certmaster/triggers/sign/post

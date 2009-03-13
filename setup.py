@@ -31,7 +31,7 @@ if __name__ == "__main__":
                 license = "GPL",
 		scripts = [
                      "scripts/certmaster", "scripts/certmaster-ca",
-                     "scripts/certmaster-request",
+                     "scripts/certmaster-request", "scripts/certmaster-sync",
                 ],
 		# package_data = { '' : ['*.*'] },
                 package_dir = {"%s" % NAME: "%s" % NAME

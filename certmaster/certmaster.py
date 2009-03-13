@@ -276,6 +276,13 @@ class CertMaster(object):
 
         return signed_certs
 
+    def get_peer_certs(self):
+        """
+        Returns a list of all certs under peerroot
+        """
+        myglob = os.path.join(self.cfg.peerroot, '*.%s' % self.cfg.cert_extension)
+        return glob.glob(myglob)
+
     # return a list of the cert hash string we use to identify systems
     def get_cert_hashes(self, hostglobs=None):
         certglob = "%s/*.cert" % (self.cfg.certroot)

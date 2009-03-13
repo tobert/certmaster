@@ -26,10 +26,12 @@ class CMConfig(BaseConfig):
     csrroot = Option('/var/lib/certmaster/certmaster/csrs')
     cert_extension = Option('cert')
     autosign = BoolOption(False)
+    sync_certs = BoolOption(False)
+    peering = BoolOption(True)
+    peerroot =  Option('/var/lib/certmaster/peers')
 
 class MinionConfig(BaseConfig):
     log_level = Option('INFO')
     certmaster = Option('certmaster')
     certmaster_port = IntOption(51235)
     cert_dir = Option('/etc/pki/certmaster')
-
