@@ -1,0 +1,44 @@
+=head1 NAME
+
+certmaster-sync -- syncronize client certificates with Func.
+
+=head1 SYNOPSIS
+
+certmaster-sync [-f|--force]
+
+=head1 DESCRIPTION
+
+certmaster-sync syncronizes client certificates amongst certmaster clients via Func.  It is assumed that the hosts who have requested certificates are reachable via Func for syncronization operations.
+
+certmaster-sync by default is called as a post-sign and post-clean trigger.  In order to enable syncronization you must set B<sync_certs> to B<True>, see B<CONFIGURATION VALUES> below.
+
+The syncronization occurs by querying remote Func methods in B<certmastermod> on the minion hosts.  This will gather information, copy any new certificates, and remove any certificates that have been cleaned.
+
+=head1 OPTIONS
+
+=over
+
+=item -f, --force
+
+Override the configuration value for B<sync_certs> in F</etc/certmaster/certmaster.conf>
+
+=back
+
+=head1 CONFIGURATION VALUES
+
+=over
+
+=item sync_certs
+
+B<sync_certs> determines whether or not the script will actually syncronize or if it will exit with no operation.  You can use -f|--force to override this configuration value.  (Default: False)
+
+=back
+
+=head1 ADDITONAL RESOURCES
+
+See https://fedorahosted.org/certmaster.  It's a Wiki.
+See also https://fedorahosted.org/func
+
+=head1 AUTHOR
+
+John Eckersberg <jeckersb@redhat.com>

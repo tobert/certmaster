@@ -62,6 +62,8 @@ certmaster is a easy mechanism for distributing SSL certificates
 %install
 test "x$RPM_BUILD_ROOT" != "x" && rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install --prefix=/usr --root=$RPM_BUILD_ROOT
+ln -s %{_bindir}/certmaster-sync $RPM_BUILD_ROOT/var/lib/certmaster/triggers/sign/post/certmaster-sync
+ln -s %{_bindir}/certmaster-sync $RPM_BUILD_ROOT/var/lib/certmaster/triggers/remove/post/certmaster-sync
 
 %clean
 rm -fr $RPM_BUILD_ROOT
@@ -96,6 +98,8 @@ rm -fr $RPM_BUILD_ROOT
 %dir /var/lib/certmaster/triggers/remove/
 %dir /var/lib/certmaster/triggers/remove/pre
 %dir /var/lib/certmaster/triggers/remove/post
+/var/lib/certmaster/triggers/sign/post/certmaster-sync
+/var/lib/certmaster/triggers/remove/post/certmaster-sync
 %doc AUTHORS README LICENSE
 %{_mandir}/man1/*.1.gz
 
