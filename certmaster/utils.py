@@ -179,6 +179,13 @@ def create_minion_keys():
     if result:
         # print "DEBUG: recieved certificate from certmaster"
         log.debug("received certificate from certmaster %s, storing to %s" % (master_uri, cert_file))
+        if not keypair:
+            keypair = certs.retrieve_key_from_file(key_file)
+        valid = certs.check_cert_key_match(cert_string, keypair)
+        if not valid:
+            log.info("certificate does not match key (run certmaster-ca --clean first?)")
+            sys.stderr.write("certificate does not match key (run certmaster-ca --clean first?)\n")
+            return
         cert_fd = os.open(cert_file, os.O_RDWR|os.O_CREAT, 0644)
         os.write(cert_fd, cert_string)
         os.close(cert_fd)

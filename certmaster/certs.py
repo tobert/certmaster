@@ -137,3 +137,18 @@ def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
         destfo.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
         destfo.close()
     return cert
+
+def check_cert_key_match(cert, key):
+    if not isinstance(cert, crypto.X509Type):
+        cert = crypto.load_certificate(crypto.FILETYPE_PEM, cert)
+    if not isinstance(key, crypto.PKeyType):
+        key = crypto.load_privatekey(crypto.FILETYPE_PEM, key)
+
+    from OpenSSL import SSL
+    context = SSL.Context(SSL.SSLv3_METHOD)
+    try:
+        context.use_certificate(cert)
+        context.use_privatekey(key)
+        return True
+    except:
+        return False
