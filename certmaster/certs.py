@@ -37,7 +37,7 @@ def make_keypair(dest=None):
     return pkey
 
 
-def make_csr(pkey, dest=None, cn=None):
+def make_csr(pkey, dest=None, cn=None, hostname=None):
     req = crypto.X509Req()
     req.get_subject()
     subj  = req.get_subject()
@@ -48,8 +48,11 @@ def make_csr(pkey, dest=None, cn=None):
     subj.OU = def_ou
     if cn:
         subj.CN = cn
+    elif hostname:
+        subj.CN = hostname
     else:
-        subj.CN = utils.get_hostname() 
+        subj.CN = utils.gethostname()
+
     subj.emailAddress = 'root@%s' % subj.CN       
         
     req.set_pubkey(pkey)

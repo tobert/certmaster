@@ -122,15 +122,18 @@ def get_hostname(talk_to_certmaster=True):
 # FIXME: move to requestor module and also create a verbose mode
 # prints to the screen for usage by /usr/bin/certmaster-request
 
-def create_minion_keys():
+def create_minion_keys(hostname=None):
+    log = logger.Logger().logger
+
     # FIXME: paths should not be hard coded here, move to settings universally
     config_file = '/etc/certmaster/minion.conf'
     config = read_config(config_file, MinionConfig)
     cert_dir = config.cert_dir
     master_uri = 'http://%s:%s/' % (config.certmaster, config.certmaster_port)
-    # print "DEBUG: acquiring hostname"
-    hn = get_hostname()
-    # print "DEBUG: hostname = %s\n" % hn
+
+    hn = hostname
+    if hn is None:
+        hn = get_hostname()
 
     if hn is None:
         raise codes.CMException("Could not determine a hostname other than localhost")
@@ -154,17 +157,17 @@ def create_minion_keys():
         if not os.path.exists(csr_file):
             if not keypair:
                 keypair = certs.retrieve_key_from_file(key_file)
-            csr = certs.make_csr(keypair, dest=csr_file)
+            csr = certs.make_csr(keypair, dest=csr_file, hostname=hn)
     except Exception, e:
         traceback.print_exc()
         raise codes.CMException, "Could not create local keypair or csr for session"
 
     result = False
-    log = logger.Logger().logger
+   
     while not result:
         try:
             # print "DEBUG: submitting CSR to certmaster: %s" % master_uri
-            log.debug("submitting CSR to certmaster %s" % master_uri)
+            log.debug("submitting CSR: %s  to certmaster %s" % (csr_file, master_uri))
             result, cert_string, ca_cert_string = submit_csr_to_master(csr_file, master_uri)
         except socket.gaierror, e:
             raise codes.CMException, "Could not locate certmaster at %s" % master_uri
