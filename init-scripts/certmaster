@@ -39,6 +39,7 @@ CAStatus()
     RVAL=3
     echo "certmaster is not running"
   fi
+  return $RVAL
 }
 
 if [ -f /lib/lsb/init-functions ]; then
