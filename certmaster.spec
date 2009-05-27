@@ -16,8 +16,8 @@
 
 Summary: Remote certificate distribution framework
 Name: certmaster
-Version: 0.24 
-Release: 5%{?dist}
+Version: 0.25 
+Release: 1%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GPLv2+
 Group: Applications/System
@@ -64,6 +64,9 @@ test "x$RPM_BUILD_ROOT" != "x" && rm -rf $RPM_BUILD_ROOT
 %{__python} setup.py install --prefix=/usr --root=$RPM_BUILD_ROOT
 ln -s %{_bindir}/certmaster-sync $RPM_BUILD_ROOT/var/lib/certmaster/triggers/sign/post/certmaster-sync
 ln -s %{_bindir}/certmaster-sync $RPM_BUILD_ROOT/var/lib/certmaster/triggers/remove/post/certmaster-sync
+touch $RPM_BUILD_ROOT/var/log/certmaster/certmaster.log
+touch $RPM_BUILD_ROOT/var/log/certmaster/audit.log
+
 
 %clean
 rm -fr $RPM_BUILD_ROOT
@@ -86,8 +89,15 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) /etc/logrotate.d/certmaster_rotate
 %dir %{python_sitelib}/certmaster
 %{python_sitelib}/certmaster/*.py*
+
 %dir /var/log/certmaster
-%dir /var/lib/certmaster
+%attr(0600,root,root)  %config(noreplace) %verify(not md5 size mtime) /var/log/certmaster/certmaster.log
+%attr(0600,root,root)  %config(noreplace) %verify(not md5 size mtime) /var/log/certmaster/audit.log
+
+%attr(600,root,root) %dir /var/lib/certmaster
+%attr(600,root,root) %dir /var/lib/certmaster/certmaster
+%attr(600,root,root) %dir /var/lib/certmaster/certmaster/certs
+%attr(600,root,root) %dir /var/lib/certmaster/certmaster/csrs
 %dir /var/lib/certmaster/peers
 %dir /var/lib/certmaster/triggers/sign/
 %dir /var/lib/certmaster/triggers/sign/pre
@@ -121,6 +131,9 @@ else
    done
 fi
 exit 0
+# fix perms on log files
+chmod 600 /var/log/certmaster/certmaster.log
+chmod 600 /var/log/certmaster/audit.log
 
 %preun
 if [ "$1" = 0 ] ; then
@@ -136,6 +149,11 @@ fi
 
 
 %changelog
+* Tue May 26 2009 Adrian Likins <alikins@redhat.com> - 0.25-1
+- add /var/lib/certmaster/certmaster* to spec and set perms
+- add /var/log/certmaster/certmaster.log,audit.log to spec
+  and set perms
+
 * Wed Feb 18 2009 Adrian Likins <alikins@redhat.com> - 0.24.5
 - remove version file
 
