@@ -352,11 +352,14 @@ def main(argv):
     sys.excepthook = excepthook  
     cm = CertMaster('/etc/certmaster/certmaster.conf')
 
+    if "--version" in sys.argv or "-v" in sys.argv:
+        print >> sys.stderr, file("/etc/certmaster/version").read().strip()
+        sys.exit(0)
+
     if "daemon" in argv or "--daemon" in argv:
         utils.daemonize("/var/run/certmaster.pid")
     else:
         print "serving...\n"
-
 
     # just let exceptions bubble up for now
     serve(cm)
