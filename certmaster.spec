@@ -87,6 +87,7 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) /etc/certmaster/minion.conf
 %config(noreplace) /etc/certmaster/certmaster.conf
 %config(noreplace) /etc/logrotate.d/certmaster_rotate
+%config /etc/certmaster/version
 %dir %{python_sitelib}/certmaster
 %{python_sitelib}/certmaster/*.py*
 
@@ -149,6 +150,9 @@ fi
 
 
 %changelog
+* Thu Jun 11 2009 Adrian Likins <alikins@redhat.com> - 0.25-1
+- add /etc/certmaster/func
+
 * Tue May 26 2009 Adrian Likins <alikins@redhat.com> - 0.25-1
 - add /var/lib/certmaster/certmaster* to spec and set perms
 - add /var/log/certmaster/certmaster.log,audit.log to spec
