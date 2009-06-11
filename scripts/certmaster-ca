@@ -7,6 +7,7 @@
 
 import sys
 import glob
+import optparse
 import os
 
 import certmaster
@@ -15,15 +16,17 @@ import certmaster.certmaster
 
 
 
-from optparse import OptionParser
 
 def errorprint(stuff):
     print >> sys.stderr, stuff
 
+class CertmasterCAOptionParser(optparse.OptionParser):
+    def get_version(self):
+        return file("/etc/func/version").read().strip()
 
 def parseargs(args):
     usage = 'certmaster-ca <option> [args]'
-    parser = OptionParser(usage=usage)
+    parser = CertmasterCAOptionParser(usage=usage,version=True)
     
     parser.add_option('-l', '--list', default=False, action="store_true",
           help='list signing requests remaining')
