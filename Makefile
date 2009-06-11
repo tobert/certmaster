@@ -12,6 +12,12 @@ INITDIR	= init-scripts
 
 all: rpms
 
+versionfile:
+	echo "version:" $(VERSION) > etc/version
+	echo "release:" $(RELEASE) >> etc/version
+	echo "source build date:" $(DATE) >> etc/version
+	echo "git commit:" $(shell git log -n 1 --pretty="format:%H") >> etc/version
+	echo "git date:" $(shell git log -n 1 --pretty="format:%cd") >> etc/version
 
 manpage:
 	pod2man --center="certmaster-request" --release="" ./docs/certmaster-request.pod | gzip -c > ./docs/certmaster-request.1.gz
