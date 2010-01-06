@@ -1,6 +1,6 @@
 =head1 NAME
 
-certmaster-request -- requests SSL certs from a certmasster
+certmaster-request -- requests SSL certs from a certmaster
 Fedora Unified Network Controller.
 
 =head1 SYNOPSIS
