@@ -29,13 +29,16 @@ def our_verify(connection, x509, errNum, errDepth, preverifyOK):
     return preverifyOK
 
 
-def CreateSSLContext(pkey, cert, ca_cert):
+def CreateSSLContext(pkey, cert, ca_cert, passwd_callback=None):
     for f in pkey, cert, ca_cert:
         if f and not os.access(f, os.R_OK):
             print "%s does not exist or is not readable." % f
             os._exit(1)
 
     ctx = SSL.Context(SSL.SSLv3_METHOD)   # SSLv3 only
+    if passwd_callback:
+        ctx.set_passwd_cb = passwd_callback
+
     ctx.use_certificate_file(cert)
     ctx.use_privatekey_file(pkey)
     ctx.load_client_ca(ca_cert)
