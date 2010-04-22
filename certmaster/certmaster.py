@@ -22,7 +22,19 @@ import traceback
 import os
 import os.path
 from OpenSSL import crypto
-import sha
+
+try:
+    import hashlib
+except ImportError:
+    # Python-2.4.z ... gah! (or even 2.3!)
+    import sha
+    class hashlib:
+        @staticmethod
+        def new(algo):
+            if algo == 'sha1':
+                return sha.new()
+            raise ValueError, "Bad checksum type"
+
 import glob
 import socket
 import exceptions
@@ -123,10 +135,10 @@ class CertMaster(object):
         if os.path.exists(csrfile):
             oldfo = open(csrfile)
             oldcsrbuf = oldfo.read()
-            oldsha = sha.new()
+            oldsha = hashlib.new('sha1')
             oldsha.update(oldcsrbuf)
             olddig = oldsha.hexdigest()
-            newsha = sha.new()
+            newsha = hashlib.new('sha1')
             newsha.update(csrbuf)
             newdig = newsha.hexdigest()
             if not newdig == olddig:

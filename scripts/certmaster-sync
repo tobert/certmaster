@@ -7,7 +7,19 @@
 
 import os
 import sys
-import sha
+try:
+    import hashlib
+except ImportError:
+    # Python-2.4.z ... gah! (or even 2.3!)
+    import sha
+    class hashlib:
+        @staticmethod
+        def new(algo):
+            if algo == 'sha1':
+                return sha.new()
+            raise ValueError, "Bad checksum type"
+
+
 import xmlrpclib
 from glob import glob
 from time import sleep
@@ -72,7 +84,7 @@ def local_certs():
     return results
 
 def checksum(f):
-    thissum = sha.new()
+    thissum = hashlib.new('sha1')
     if os.path.exists(f):
         fo = open(f, 'r')
         data = fo.read()
