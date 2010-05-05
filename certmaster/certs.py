@@ -37,7 +37,7 @@ def make_keypair(dest=None):
     return pkey
 
 
-def make_csr(pkey, dest=None, cn=None, hostname=None):
+def make_csr(pkey, dest=None, cn=None, hostname=None, emailaddr=None):
     req = crypto.X509Req()
     req.get_subject()
     subj  = req.get_subject()
@@ -53,7 +53,10 @@ def make_csr(pkey, dest=None, cn=None, hostname=None):
     else:
         subj.CN = utils.gethostname()
 
-    subj.emailAddress = 'root@%s' % subj.CN       
+    if emailaddr:
+        subj.emailAddress = emailaddr
+    else:
+        subj.emailAddress = 'root@%s' % subj.CN       
         
     req.set_pubkey(pkey)
     req.sign(pkey, 'md5')
