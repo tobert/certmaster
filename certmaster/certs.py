@@ -142,7 +142,7 @@ def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
     cert.set_subject(csr.get_subject())
     cert.set_pubkey(csr.get_pubkey())
     cert.set_version(2)
-    xt = crypto.X509Extension('basicConstraints', False ,'CA:False')
+    xt = crypto.X509Extension('basicConstraints', False ,'CA:FALSE')
     # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)    
     cacert.add_extensions((xt,))
     cert.sign(cakey, 'sha1')
