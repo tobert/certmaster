@@ -64,6 +64,10 @@ class CertMaster(object):
         self.logger = logger.Logger().logger
         self.audit_logger = logger.AuditLogger()
 
+        # if ca_key_file exists and ca_cert_file is missing == minion only setup
+        if os.path.exists(self.ca_key_file) and not os.path.exists(self.ca_cert_file):
+            return
+
         try:
             if not os.path.exists(self.cfg.cadir):
                 os.makedirs(self.cfg.cadir)
