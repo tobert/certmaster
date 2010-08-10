@@ -137,6 +137,9 @@ def create_minion_keys(hostname=None):
 
     if hn is None:
         raise codes.CMException("Could not determine a hostname other than localhost")
+    else:
+        # use lowercase letters for hostnames
+        hostname = hostname.lower()
 
     key_file = '%s/%s.pem' % (cert_dir, hn)
     csr_file = '%s/%s.csr' % (cert_dir, hn)
