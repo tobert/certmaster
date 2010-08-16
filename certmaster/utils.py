@@ -173,7 +173,7 @@ def create_minion_keys(hostname=None):
             log.debug("submitting CSR: %s  to certmaster %s" % (csr_file, master_uri))
             result, cert_string, ca_cert_string = submit_csr_to_master(csr_file, master_uri)
         except socket.gaierror, e:
-            raise codes.CMException, "Could not locate certmaster at %s" % master_uri
+            log.warning("Could not locate certmaster at %s" % master_uri)
 
         # logging here would be nice
         if not result:
