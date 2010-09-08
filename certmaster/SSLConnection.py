@@ -97,6 +97,9 @@ class SSLConnection:
         if not con in write:
             raise socket.timeout((110, "Operation timed out."))
 
+        if hasattr(data, 'tobytes'):
+            data = data.tobytes()
+            
         starttime = time.time()
         origlen = len(data)
         sent = -1
