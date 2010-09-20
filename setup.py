@@ -4,7 +4,7 @@ from distutils.core import setup
 #from setuptools import setup,find_packages
 
 NAME = "certmaster"
-VERSION = "0.25" 
+VERSION = "0.27" 
 SHORT_DESC = "%s remote configuration and management api" % NAME
 LONG_DESC = """
 A small pluggable xml-rpc daemon used by %s to implement various web services hooks

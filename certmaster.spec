@@ -16,7 +16,7 @@
 
 Summary: Remote certificate distribution framework
 Name: certmaster
-Version: 0.25 
+Version: 0.27
 Release: 1%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: GPLv2+
@@ -150,6 +150,9 @@ fi
 
 
 %changelog
+* Wed Aug 25 2010 Seth Vidal <skvidal at fedoraproject.org> - 0.27-1
+- 0.27
+
 * Thu Jun 11 2009 Adrian Likins <alikins@redhat.com> - 0.25-1
 - add /etc/certmaster/func
 
