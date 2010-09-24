@@ -1,4 +1,4 @@
-VERSION		= 0.25 
+VERSION		= 0.27
 RELEASE		= 1
 PYTHON		= /usr/bin/python
 
