@@ -99,7 +99,7 @@ class SSLConnection:
 
         if hasattr(data, 'tobytes'):
             data = data.tobytes()
-            
+
         starttime = time.time()
         origlen = len(data)
         sent = -1

@@ -65,10 +65,10 @@ def daemonize(pidfile=None):
     os.close(2)
 
     # based on http://code.activestate.com/recipes/278731/
-    os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
+    os.open(REDIRECT_TO, os.O_RDWR)     # standard input (0)
 
-    os.dup2(0, 1)			# standard output (1)
-    os.dup2(0, 2)			# standard error (2)
+    os.dup2(0, 1)                       # standard output (1)
+    os.dup2(0, 2)                       # standard error (2)
 
 
 
@@ -87,7 +87,7 @@ def nice_exception(etype, evalue, etb):
     except:
         nicetype = etype
     nicestack = string.join(traceback.format_list(traceback.extract_tb(etb)))
-    return [ REMOTE_ERROR, nicetype, str(evalue), nicestack ] 
+    return [ REMOTE_ERROR, nicetype, str(evalue), nicestack ]
 
 def is_error(result):
     # FIXME: I believe we can remove this function
@@ -104,10 +104,10 @@ def get_hostname(talk_to_certmaster=True):
     "localhost" is a lame hostname to use for a key, so try to get
     a more meaningful hostname. We do this by connecting to the certmaster
     and seeing what interface/ip it uses to make that connection, and looking
-    up the hostname for that. 
+    up the hostname for that.
     """
     # FIXME: this code ignores http proxies (which granted, we don't
-    #      support elsewhere either. 
+    #      support elsewhere either.
     hostname = None
     hostname = socket.gethostname()
     # print "DEBUG: HOSTNAME TRY1: %s" % hostname
@@ -166,7 +166,7 @@ def create_minion_keys(hostname=None):
         raise codes.CMException, "Could not create local keypair or csr for session"
 
     result = False
-   
+
     while not result:
         try:
             # print "DEBUG: submitting CSR to certmaster: %s" % master_uri
@@ -244,4 +244,3 @@ def submit_csr_to_master(csr_file, master_uri):
 
     # print "DEBUG: waiting for cert"
     return s.wait_for_cert(csr)
-              

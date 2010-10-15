@@ -77,11 +77,11 @@ class CertMaster(object):
             print 'Cannot make certmaster certificate authority keys/certs, aborting: %s' % e
             sys.exit(1)
 
-            
+
         # open up the cakey and cacert so we have them available
         self.cakey = certs.retrieve_key_from_file(self.ca_key_file)
         self.cacert = certs.retrieve_cert_from_file(self.ca_cert_file)
-        
+
         for dirpath in [self.cfg.cadir, self.cfg.certroot, self.cfg.csrroot]:
             if not os.path.exists(dirpath):
                 os.makedirs(dirpath)
@@ -91,7 +91,7 @@ class CertMaster(object):
                  'wait_for_cert': self.wait_for_cert,
                  }
 
-        
+
     def _dispatch(self, method, params):
         if method == 'trait_names' or method == '_getAttributeNames':
             return self.handlers.keys()
@@ -102,40 +102,40 @@ class CertMaster(object):
         else:
             self.logger.info("Unhandled method call for method: %s " % method)
             raise codes.InvalidMethodException
-    
+
     def _sanitize_cn(self, commonname):
         commonname = commonname.replace('/', '')
-        commonname = commonname.replace('\\', '')       
+        commonname = commonname.replace('\\', '')
         return commonname
-    
+
     def wait_for_cert(self, csrbuf, with_triggers=True):
         """
            takes csr as a string
            returns True, caller_cert, ca_cert
            returns False, '', ''
         """
-       
+
         try:
             csrreq = crypto.load_certificate_request(crypto.FILETYPE_PEM, csrbuf)
         except crypto.Error, e:
             #XXX need to raise a fault here and document it - but false is just as good
             return False, '', ''
-            
+
         requesting_host = self._sanitize_cn(csrreq.get_subject().CN)
 
         if with_triggers:
-            self._run_triggers(requesting_host, '/var/lib/certmaster/triggers/request/pre/*') 
+            self._run_triggers(requesting_host, '/var/lib/certmaster/triggers/request/pre/*')
 
         self.logger.info("%s requested signing of cert %s" % (requesting_host,csrreq.get_subject().CN))
         # get rid of dodgy characters in the filename we're about to make
-        
+
         certfile = '%s/%s.cert' % (self.cfg.certroot, requesting_host)
         csrfile = '%s/%s.csr' % (self.cfg.csrroot, requesting_host)
 
         # check for old csr on disk
         # if we have it - compare the two - if they are not the same - raise a fault
         self.logger.debug("csrfile: %s  certfile: %s" % (csrfile, certfile))
-   
+
         if os.path.exists(csrfile):
             oldfo = open(csrfile)
             oldcsrbuf = oldfo.read()
@@ -149,7 +149,7 @@ class CertMaster(object):
                 self.logger.info("A cert for %s already exists and does not match the requesting cert" % (requesting_host))
                 # XXX raise a proper fault
             return False, '', ''
-        
+
 
         # look for a cert:
         # if we have it, then return True, etc, etc
@@ -160,21 +160,21 @@ class CertMaster(object):
             if with_triggers:
                 self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/request/post/*')
             return True, cert_buf, cacert_buf
-        
+
         # if we don't have a cert then:
         # if we're autosign then sign it, write out the cert and return True, etc, etc
         # else write out the csr
-        
+
         if self.cfg.autosign:
             cert_fn = self.sign_this_csr(csrreq)
-            cert = certs.retrieve_cert_from_file(cert_fn)            
+            cert = certs.retrieve_cert_from_file(cert_fn)
             cert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
             cacert_buf = crypto.dump_certificate(crypto.FILETYPE_PEM, self.cacert)
             self.logger.info("cert for %s was autosigned" % (requesting_host))
             if with_triggers:
                 self._run_triggers(None,'/var/lib/certmaster/triggers/request/post/*')
             return True, cert_buf, cacert_buf
-        
+
         else:
             # write the csr out to a file to be dealt with by the admin
             destfo = open(csrfile, 'w')
@@ -189,7 +189,7 @@ class CertMaster(object):
         return False, '', ''
 
     def get_csrs_waiting(self):
-        hosts = [] 
+        hosts = []
         csrglob = '%s/*.csr' % self.cfg.csrroot
         csr_list = glob.glob(csrglob)
         for f in csr_list:
@@ -197,7 +197,7 @@ class CertMaster(object):
             hn = hn[:-4]
             hosts.append(hn)
         return hosts
-   
+
     def remove_this_cert(self, hn, with_triggers=True):
         """ removes cert for hostname using unlink """
         cm = self
@@ -217,32 +217,32 @@ class CertMaster(object):
             os.unlink(fn)
         if with_triggers:
             self._run_triggers(hn,'/var/lib/certmaster/triggers/remove/post/*')
-            
+
     def sign_this_csr(self, csr, with_triggers=True):
         """returns the path to the signed cert file"""
         csr_unlink_file = None
 
-        if type(csr) is type(''): 
+        if type(csr) is type(''):
             if csr.startswith('/') and os.path.exists(csr):  # we have a full path to the file
                 csrfo = open(csr)
                 csr_buf = csrfo.read()
                 csr_unlink_file = csr
-                
+
             elif os.path.exists('%s/%s' % (self.cfg.csrroot, csr)): # we have a partial path?
                 csrfo = open('%s/%s' % (self.cfg.csrroot, csr))
                 csr_buf = csrfo.read()
                 csr_unlink_file = '%s/%s' % (self.cfg.csrroot, csr)
-                
+
             # we have a string of some kind
             else:
                 csr_buf = csr
 
             try:
-                csrreq = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr_buf)                
+                csrreq = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr_buf)
             except crypto.Error, e:
                 self.logger.info("Unable to sign %s: Bad CSR" % (csr))
                 raise exceptions.Exception("Bad CSR: %s" % csr)
-                
+
         else: # assume we got a bare csr req
             csrreq = csr
 
@@ -266,10 +266,10 @@ class CertMaster(object):
         if with_triggers:
             self._run_triggers(requesting_host,'/var/lib/certmaster/triggers/sign/post/*')
 
-        
+
         if csr_unlink_file and os.path.exists(csr_unlink_file):
             os.unlink(csr_unlink_file)
-            
+
         return certfile
 
     # return a list of already signed certs
@@ -311,12 +311,12 @@ class CertMaster(object):
         for hostglob in globs:
             certglob = "%s/%s.cert" % (self.cfg.certroot, hostglob)
             certfiles = certfiles + glob.glob(certglob)
-        
+
         cert_hashes = []
         for certfile in certfiles:
             cert = certs.retrieve_cert_from_file(certfile)
             cert_hashes.append("%s-%s" % (cert.get_subject().CN, cert.subject_name_hash()))
-            
+
         return cert_hashes
 
     def _run_triggers(self, ref, globber):
@@ -327,7 +327,7 @@ class CertmasterXMLRPCServer(SimpleXMLRPCServer.SimpleXMLRPCServer):
     def __init__(self, addr):
         self.allow_reuse_address = True
         SimpleXMLRPCServer.SimpleXMLRPCServer.__init__(self, addr)
-        
+
 
 def serve(xmlrpcinstance):
 
@@ -340,7 +340,7 @@ def serve(xmlrpcinstance):
     listen_addr = config.listen_addr
     listen_port = config.listen_port
     if listen_port == '':
-        listen_port = CERTMASTER_LISTEN_PORT 
+        listen_port = CERTMASTER_LISTEN_PORT
     server = CertmasterXMLRPCServer((listen_addr,listen_port))
     server.logRequests = 0 # don't print stuff to console
     server.register_instance(xmlrpcinstance)
@@ -357,15 +357,15 @@ def excepthook(exctype, value, tracebackobj):
     print excvalue_blurb
     print exctb_blurb
 
-    log = logger.Logger().logger 
+    log = logger.Logger().logger
     log.info(exctype_blurb)
     log.info(excvalue_blurb)
     log.info(exctb_blurb)
 
 
 def main(argv):
-   
-    sys.excepthook = excepthook  
+
+    sys.excepthook = excepthook
     cm = CertMaster('/etc/certmaster/certmaster.conf')
 
     if "--version" in sys.argv or "-v" in sys.argv:
@@ -380,7 +380,7 @@ def main(argv):
     # just let exceptions bubble up for now
     serve(cm)
 
- 
+
 if __name__ == "__main__":
     #textdomain(I18N_DOMAIN)
     main(sys.argv)

@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright (c) 2007 Red Hat, inc 
+# Copyright (c) 2007 Red Hat, inc
 #- Written by Seth Vidal skvidal @ fedoraproject.org
 
 from OpenSSL import crypto
@@ -33,7 +33,7 @@ def make_keypair(dest=None):
         destfd = os.open(dest, os.O_RDWR|os.O_CREAT, 0600)
         os.write(destfd, (crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey)))
         os.close(destfd)
-    
+
     return pkey
 
 
@@ -56,8 +56,8 @@ def make_csr(pkey, dest=None, cn=None, hostname=None, emailaddr=None):
     if emailaddr:
         subj.emailAddress = emailaddr
     else:
-        subj.emailAddress = 'root@%s' % subj.CN       
-        
+        subj.emailAddress = 'root@%s' % subj.CN
+
     req.set_pubkey(pkey)
     req.sign(pkey, 'md5')
     if dest:
@@ -74,7 +74,7 @@ def retrieve_key_from_file(keyfile):
     keypair = crypto.load_privatekey(crypto.FILETYPE_PEM, buf)
     return keypair
 
-    
+
 def retrieve_csr_from_file(csrfile):
     fo = open(csrfile, 'r')
     buf = fo.read()
@@ -108,8 +108,8 @@ def create_ca(CN="Certmaster Certificate Authority", ca_key_file=None, ca_cert_f
         destfo = open(ca_cert_file, 'w')
         destfo.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
         destfo.close()
- 
-                                           
+
+
 def _get_serial_number(cadir):
     serial = '%s/serial.txt' % cadir
     i = 1
@@ -118,11 +118,11 @@ def _get_serial_number(cadir):
         f = f.replace('\n','')
         try:
             i = int(f)
-            i+=1      
+            i+=1
         except ValueError, e:
             i = 1
-            
-    _set_serial_number(cadir, i)        
+
+    _set_serial_number(cadir, i)
     return i
 
 
@@ -131,8 +131,8 @@ def _set_serial_number(cadir, last):
     f = open(serial, 'w')
     f.write(str(last) + '\n')
     f.close()
-            
-        
+
+
 def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
     cert = crypto.X509()
     cert.set_serial_number(_get_serial_number(cadir))
@@ -143,7 +143,7 @@ def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
     cert.set_pubkey(csr.get_pubkey())
     cert.set_version(2)
     xt = crypto.X509Extension('basicConstraints', False ,'CA:FALSE')
-    # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)    
+    # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)
     cert.add_extensions((xt,))
     cert.sign(cakey, 'sha1')
     if slave_cert_file:

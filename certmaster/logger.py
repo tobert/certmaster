@@ -33,12 +33,12 @@ class Logger(Singleton):
 
     def __init__(self, logfilepath ="/var/log/certmaster/certmaster.log"):
         config_file = '/etc/certmaster/minion.conf'
-        self.config = read_config(config_file, CMConfig)    
+        self.config = read_config(config_file, CMConfig)
         self.loglevel = logging._levelNames[self.config.log_level]
         self._setup_logging()
         if self._no_handlers:
             self._setup_handlers(logfilepath=logfilepath)
-        
+
     def _setup_logging(self):
         self.logger = logging.getLogger("certmaster")
 

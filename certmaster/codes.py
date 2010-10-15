@@ -25,4 +25,3 @@ class InvalidMethodException(CertMasterException):
     pass
 
 # FIXME: more sub-exceptions maybe
-

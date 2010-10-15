@@ -121,4 +121,3 @@ class HTTPS(httplib.HTTP):
 
     def __init__(self, host='', port=None, ssl_context=None, strict=None, timeout=None):
         self._setup(self._connection_class(host, port, ssl_context, strict, timeout))
-

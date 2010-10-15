@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2002 Duke University 
+# Copyright 2002 Duke University
 # filched from yum  - menno smits wrote this - he rocks
 
 
@@ -32,13 +32,13 @@ class ConfigError(exceptions.Exception):
         self.value = value
     def __str__(self):
         return "%s" %(self.value,)
- 
-   
+
+
 class Option(object):
     '''
     This class handles a single Yum configuration file option. Create
     subclasses for each type of supported configuration option.
-    
+
     Python descriptor foo (__get__ and __set__) is used to make option
     definition easy and consise.
     '''
@@ -55,7 +55,7 @@ class Option(object):
         self._attrname = '__opt%d' % id(self)
 
     def __get__(self, obj, objtype):
-        '''Called when the option is read (via the descriptor protocol). 
+        '''Called when the option is read (via the descriptor protocol).
 
         @param obj: The configuration instance to modify.
         @param objtype: The type of the config instance (not used).
@@ -68,7 +68,7 @@ class Option(object):
         return getattr(obj, self._attrname, None)
 
     def __set__(self, obj, value):
-        '''Called when the option is set (via the descriptor protocol). 
+        '''Called when the option is set (via the descriptor protocol).
 
         @param obj: The configuration instance to modify.
         @param value: The value to set the option to.
@@ -85,8 +85,8 @@ class Option(object):
         setattr(obj, self._attrname, value)
 
     def setup(self, obj, name):
-        '''Initialise the option for a config instance. 
-        This must be called before the option can be set or retrieved. 
+        '''Initialise the option for a config instance.
+        This must be called before the option can be set or retrieved.
 
         @param obj: BaseConfig (or subclass) instance.
         @param name: Name of the option.
@@ -105,7 +105,7 @@ class Option(object):
 
         @param s: Raw string value to parse.
         @return: Validated native value.
-    
+
         Will raise ValueError if there was a problem parsing the string.
         Subclasses should override this.
         '''
@@ -164,7 +164,7 @@ class UrlOption(Option):
     This option handles lists of URLs with validation of the URL scheme.
     '''
 
-    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'), 
+    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'),
             allow_none=False):
         super(UrlOption, self).__init__(default)
         self.schemes = schemes
@@ -208,7 +208,7 @@ class UrlListOption(ListOption):
 
         # Hold a UrlOption instance to assist with parsing
         self._urloption = UrlOption(schemes=schemes)
-        
+
     def parse(self, s):
         out = []
         for url in super(UrlListOption, self).parse(s):
@@ -255,7 +255,7 @@ class SelectionOption(Option):
     def __init__(self, default=None, allowed=()):
         super(SelectionOption, self).__init__(default)
         self._allowed = allowed
-        
+
     def parse(self, s):
         if s not in self._allowed:
             raise ValueError('"%s" is not an allowed value' % s)
@@ -276,7 +276,7 @@ class BytesOption(Option):
         The input should be a string containing a (possibly floating point)
         number followed by an optional single character unit. Valid units are
         'k', 'M', 'G'. Case is ignored.
-       
+
         Valid inputs: 100, 123M, 45.6k, 12.4G, 100K, 786.3, 0
         Invalid inputs: -10, -0.1, 45.6L, 123Mb
 
@@ -298,7 +298,7 @@ class BytesOption(Option):
         else:
             n = s
             mult = 1
-             
+
         try:
             n = float(n)
         except ValueError:
@@ -313,7 +313,7 @@ class BytesOption(Option):
 class ThrottleOption(BytesOption):
 
     def parse(self, s):
-        """Get a throttle option. 
+        """Get a throttle option.
 
         Input may either be a percentage or a "friendly bandwidth value" as
         accepted by the BytesOption.
@@ -382,7 +382,7 @@ class BaseConfig(object):
                 # No matching option in this section, try inheriting
                 if parent and option.inherit:
                     value = getattr(parent, name)
-               
+
             if value is not None:
                 setattr(self, name, value)
 
@@ -397,7 +397,7 @@ class BaseConfig(object):
     optionobj = classmethod(optionobj)
 
     def isoption(cls, name):
-        '''Return True if the given name refers to a defined option 
+        '''Return True if the given name refers to a defined option
         '''
         try:
             cls.optionobj(name)
@@ -438,7 +438,7 @@ class BaseConfig(object):
                 raise ValueError("not populated, don't know section")
             section = self._section
 
-        # Updated the ConfigParser with the changed values    
+        # Updated the ConfigParser with the changed values
         cfgOptions = self.cfg.options(section)
         for name,value in self.iteritems():
             option = self.optionobj(name)

@@ -67,4 +67,3 @@ class CertMaster_Client_Exception(Exception):
         self.value = value
     def __str__(self):
         return "%s" %(self.value,)
-
