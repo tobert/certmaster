@@ -72,7 +72,7 @@ class CertMaster(object):
             if not os.path.exists(self.cfg.cadir):
                 os.makedirs(self.cfg.cadir)
             if not os.path.exists(self.ca_key_file) and not os.path.exists(self.ca_cert_file):
-                certs.create_ca(CN=mycn, ca_key_file=self.ca_key_file, ca_cert_file=self.ca_cert_file)
+                certs.create_ca(CN=mycn, ca_key_file=self.ca_key_file, ca_cert_file=self.ca_cert_file, dnsname=usename)
         except (IOError, OSError), e:
             print 'Cannot make certmaster certificate authority keys/certs, aborting: %s' % e
             sys.exit(1)
