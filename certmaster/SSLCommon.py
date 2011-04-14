@@ -39,6 +39,7 @@ def CreateSSLContext(pkey, cert, ca_cert, passwd_callback=None):
     if passwd_callback:
         ctx.set_passwd_cb = passwd_callback
 
+    ctx.set_cipher_list('ALL:!aNULL:!ADH:!eNULL:!LOW:!MEDIUM:!EXP:RC4+RSA:+HIGH')
     ctx.use_certificate_file(cert)
     ctx.use_privatekey_file(pkey)
     ctx.load_client_ca(ca_cert)
