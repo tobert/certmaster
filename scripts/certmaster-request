@@ -16,8 +16,17 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 """
 
 import distutils.sysconfig
+import optparse
 
 from certmaster import requester
 
 if __name__ == "__main__":
-    requester.request_cert()
+    parser = optparse.OptionParser()
+
+    parser.add_option('--hostname', action="store", dest="hostname",
+        metavar="NAME", 
+        help='hostname to use as the CN for the certificate')
+    
+    (opts, args) = parser.parse_args()
+
+    requester.request_cert(hostname=opts.hostname)
