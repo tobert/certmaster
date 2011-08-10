@@ -6,3 +6,10 @@ https://fedorahosted.org/certmaster/
 
 Source: http://git.fedorahosted.org/git/?p=certmaster.git;a=summary
 
+Note for https://github.com/tobert/certmaster fork: upstream has a few
+restrictions that I don't have at all. I have restrictions on how much
+time I can spend on supporting ancient rhel distros, so I'm simply working
+in master for now to get something deployable. If this becomes something
+I'm using in production, I'll be able to get the time to merge all of this
+back to upstream in a sensible way.
+
