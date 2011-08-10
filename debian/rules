@@ -1,0 +1,110 @@
+#!/usr/bin/make -f
+include /usr/share/quilt/quilt.make
+
+export DH_VERBOSE=0
+export DH_PYCENTRAL=include-links
+PKG = certmaster
+
+PYVERS  = $(shell pyversions -vr)
+PACKAGE = $(shell dh_listpackages)
+BORKED = docs/certmaster-request.1.gz.BORKED
+PYINST = $(CURDIR)/debian/certmaster
+
+################################################################################
+#. Build
+build: build-stamp
+build-stamp: fix patch
+	dh_testdir
+	dh_prep
+	python$* setup.py build
+	touch $@
+
+################################################################################
+#. Install
+install: install-stamp
+	dh_install
+	dh_installdirs
+	dh_installdocs
+	dh_installexamples
+	#dh_installinit
+	dh_installman
+	dh_installchangelogs
+	install debian/upstream.changelog debian/$(PKG)/usr/share/doc/$(PKG)/changelog
+	dh_link
+	#.
+	dh_pycentral
+	dh_installdeb
+install-stamp: build-stamp $(PYVERS:%=install-ext-%)
+	touch $@
+install-ext-%:
+	dh_testdir
+	dh_testroot
+	python$* setup.py install \
+	  --root=$(PYINST) \
+	  --prefix=/usr \
+	  --install-scripts=/usr/share/certmaster
+	touch $@
+
+################################################################################
+#. Binary (Executable)
+binary: binary-indep
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	#.
+	dh_compress
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	#.
+	dh_fixperms
+	dh_builddeb
+
+################################################################################
+#. Fix & Unfix - These are changes that I would like upstream to implement,
+#. while they don't, I'll fix it myself here...
+.PHONY: unfix fix
+
+fix: scripts/certmasterd logrotate.d/certmaster
+	#. Cleaning after upstream...
+	test -f $(BORKED) || mv $(BORKED:.BORKED=) $(BORKED)
+	pod2man \
+	  --center="certmaster-request" \
+	  --release="" \
+	  docs/certmaster-request.pod \
+	    | gzip -c \
+	    > $(BORKED:.BORKED=)
+	pod2man \
+	  --center="certmasterd" \
+	  --release="" \
+	  docs/certmaster.pod \
+	    | gzip -c \
+	    > docs/certmasterd.1.gz
+scripts/certmasterd:
+	mv scripts/certmaster $@
+logrotate.d/certmaster:
+	mkdir logrotate.d
+	mv etc/certmaster_rotate $@
+
+
+
+unfix: scripts/certmaster etc/certmaster_rotate
+	#. Cleaning after upstream...
+	test ! -f $(BORKED) || mv $(BORKED) $(BORKED:.BORKED=)
+	test ! -f docs/certmasterd.1.gz || rm -f docs/certmasterd.1.gz
+scripts/certmaster:
+	mv scripts/certmasterd $@
+etc/certmaster_rotate:
+	mv logrotate.d/certmaster $@
+	rmdir logrotate.d
+
+################################################################################
+#. Clean
+clean: $(PYVERS:%=clean-ext-%) unpatch unfix
+	dh_testdir
+	dh_clean build-stamp install-stamp $(PYVERS:%=install-ext-%)
+	test ! -d build || rm -rf build
+clean-ext-%:
+	python$* setup.py clean
+
+.PHONY: build clean binary-indep binary-arch binary install

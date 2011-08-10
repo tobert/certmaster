@@ -1,0 +1,2 @@
+var/lib/certmaster/certs
+var/lib/certmaster/csrs

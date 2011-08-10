@@ -1,0 +1,76 @@
+Note that the link in the upstream is invalid.  For more information, you
+should actually goto https://fedorahosted.org/certmaster/.
+
+Another note that may clear some confusion, is that the `certmaster' and
+`func' packages both originated from the same package, but later were
+split up into two packages.
+
+Now, for this Debian package...
+
+
+Ready The Minions
+=================
+
+1. Install the "certmaster" package on all the machines you would like to
+   control.
+
+2. Edit /etc/certmaster/minion.conf to specify which overlord they are to obey.
+    Generally you would settle for one overlord controlling all other hosts
+    running as minions.  In the case of the `hotwire-irbd' package, the hotwire
+    server would also host the overlord, and all other machines would be
+    minions.
+
+   You can alternatively have overlords working under other overlords, and this
+   is recommended for large networks.
+
+3. Run the `certmaster-request' executable to request certificates.  Once a
+   request is made by the minions, they will have to wait until the overlord has
+   actually signed them; by default (and recommended), this will require manual
+   administrative action by the administrator, however it can be automated if
+   required.
+
+   Note: This means that `certmaster-request' will remain in the foreground
+   until the certmaster daemon has signed the request from the minion.
+
+   Note: If you are using Func, you do not have to perform this step, as Func
+   will do it for you.  Similarly, another application may make similar calls
+   and make this step void.
+
+4. On your certmaster server, run `certmaster-ca --list' to get a list of
+   minions awaiting to be signed.
+
+   To sign then, simply run `certmaster-ca --sign <hostname>'.
+
+   As soon as the minion is signed, the forground `certmaster-request'
+   processes will complete and drop back to the shell.
+
+
+Running tools as non-root
+=========================
+
+Generally it's recommended to do as much of your work as possible as non-root.
+To allow your users access to the certificates necessary to run func, run these
+commands as root, replacing MYUSER with the name of your normal login.
+
+   setfacl -d -R -m 'u:MYUSER:rX' /etc/pki/certmaster/
+
+   setfacl -R -m 'u:MYUSER:rX' /etc/pki/certmaster/
+
+
+Pointing Minions at another Certmaster Overlord
+===============================================
+
+Simply do this on the minions...
+
+   1. rm /etc/pki/certmaster/*.{csr,cert,pem}
+
+   2. Reconfigure /etc/certmaster/minion.conf
+
+   3. Then run `certmaster-request' (which remains in the foreground until
+      the server has signed the certificate).
+
+Then on the certmaster overlord...
+
+   1. certmaster-ca -l (Shows you the list of unsigned minions)
+
+   2. certmaster-ca -s <minion> (From the list produced in previous command)

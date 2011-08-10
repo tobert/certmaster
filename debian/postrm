@@ -1,0 +1,36 @@
+#!/bin/bash
+#. summary of how this script can be called:
+#.        * <postrm> `remove'
+#.        * <postrm> `purge'
+#.        * <old-postrm> `upgrade' <new-version>
+#.        * <new-postrm> `failed-upgrade' <old-version>
+#.        * <new-postrm> `abort-install'
+#.        * <new-postrm> `abort-install' <old-version>
+#.        * <new-postrm> `abort-upgrade' <old-version>
+#.        * <disappearer's-postrm> `disappear' <r>overwrit>r> <new-version>
+#. for details, see http://www.debian.org/doc/debian-policy/ or
+#. the debian-policy package
+
+set -e
+
+update-rc.d -f certmasterd remove > /dev/null
+
+case $1 in
+  remove)
+  ;;
+
+  upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+  ;;
+
+  purge)
+    printf " * Cleaning up generated certificate data..."
+    rm -rf /var/log/certmaster/* && printf "."
+    rm -rf /var/lib/certmaster/csrs/* && printf "."
+    rm -rf /var/lib/certmaster/certs/* && printf "."
+    rm -rf /var/lib/certmaster/ca-certificates/* && printf "."
+    echo "Done"
+  ;;
+
+esac
+
+#DEBHELPER#

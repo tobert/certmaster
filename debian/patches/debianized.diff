@@ -1,0 +1,206 @@
+Debianizing the Red Hat package, nothing more.
+--- a/etc/certmaster.conf
++++ b/etc/certmaster.conf
+@@ -2,11 +2,11 @@
+ 
+ [main]
+ autosign = no
+-listen_addr = 
++listen_addr = localhost
+ listen_port = 51235
+ cadir = /etc/pki/certmaster/ca
+ cert_dir = /etc/pki/certmaster
+-certroot = /var/lib/certmaster/certmaster/certs
+-csrroot = /var/lib/certmaster/certmaster/csrs
++certroot = /var/lib/certmaster/certs
++csrroot = /var/lib/certmaster/csrs
+ cert_extension = cert
+ sync_certs = False
+--- a/setup.py
++++ b/setup.py
+@@ -4,7 +4,7 @@
+ #from setuptools import setup,find_packages
+ 
+ NAME = "certmaster"
+-VERSION = "0.25" 
++VERSION = "0.25"
+ SHORT_DESC = "%s remote configuration and management api" % NAME
+ LONG_DESC = """
+ A small pluggable xml-rpc daemon used by %s to implement various web services hooks
+@@ -12,17 +12,17 @@
+ 
+ 
+ if __name__ == "__main__":
+- 
++
+         manpath    = "share/man/man1/"
+         etcpath    = "/etc/%s" % NAME
+         initpath   = "/etc/init.d/"
+         logpath    = "/var/log/%s/" % NAME
+-	certdir    = "/var/lib/%s/" % NAME
+-	certmaster_cert_dir = "/var/lib/%s/%s" % (NAME,NAME)
+-	certmaster_cert_certs_dir = "/var/lib/%s/%s/certs" % (NAME, NAME)
+-	certmaster_cert_csrs_dir = "/var/lib/%s/%s/csrs" % (NAME, NAME)
+-	trigpath   = "/var/lib/%s/triggers/"% NAME
+-        pkipath    = "/etc/pki/%s" % NAME
++        certdir    = "/var/lib/%s/" % NAME
++        certmaster_cert_dir = "/var/lib/%s/%s" % (NAME,NAME)
++        certmaster_cert_certs_dir = "/var/lib/%s/%s/certs" % (NAME, NAME)
++        certmaster_cert_csrs_dir = "/var/lib/%s/%s/csrs" % (NAME, NAME)
++        trigpath   = "/var/lib/%s/triggers/"% NAME
++        pkipath    = "/var/lib/%s/ca-certificates/" % NAME
+         rotpath    = "/etc/logrotate.d"
+         aclpath    = "%s/minion-acl.d" % etcpath
+         setup(
+@@ -32,33 +32,33 @@
+                 author_email = "func-list@redhat.com",
+                 url = "https://fedorahosted.org/certmaster/",
+                 license = "GPL",
+-		scripts = [
+-                     "scripts/certmaster", "scripts/certmaster-ca",
++                scripts = [
++                     "scripts/certmasterd", "scripts/certmaster-ca",
+                      "scripts/certmaster-request", "scripts/certmaster-sync",
+                 ],
+-		# package_data = { '' : ['*.*'] },
++                # package_data = { '' : ['*.*'] },
+                 package_dir = {"%s" % NAME: "%s" % NAME
+                 },
+-		packages = ["%s" % NAME,
++                packages = ["%s" % NAME,
+                 ],
+-                data_files = [(initpath, ["init-scripts/certmaster"]),
++                data_files = [(initpath, ["debian/certmasterd"]),
+                               (etcpath,  ["etc/minion.conf"]),
+                               (etcpath,  ["etc/certmaster.conf"]),
+-                              (manpath,  ["docs/certmaster.1.gz"]),
++                              (manpath,  ["docs/certmasterd.1.gz"]),
+                               (manpath,  ["docs/certmaster-request.1.gz"]),
+                               (manpath,  ["docs/certmaster-ca.1.gz"]),
+                               (manpath,  ["docs/certmaster-sync.1.gz"]),
+-			      (rotpath,  ['etc/certmaster_rotate']),
++                              (rotpath,  ['logrotate.d/certmaster']),
+                               (logpath,  []),
+-			      (certdir,  []),
+-			      (certmaster_cert_dir, []),
+-			      (certmaster_cert_certs_dir, []),
+-			      (certmaster_cert_csrs_dir, []),
+-			      (etcpath,  []),
+-			      (pkipath,  []),
+-			      (aclpath,  []),
++                              (certdir,  []),
++                              (certmaster_cert_dir, []),
++                              (certmaster_cert_certs_dir, []),
++                              (certmaster_cert_csrs_dir, []),
++                              (etcpath,  []),
++                              (pkipath,  []),
++                              (aclpath,  []),
+                               ("%s/peers"         % certdir,  []),
+-			      ("%s/sign/pre/"     % trigpath, []),
++                              ("%s/sign/pre/"     % trigpath, []),
+                               ("%s/sign/post/"    % trigpath, []),
+                               ("%s/remove/pre/"   % trigpath, []),
+                               ("%s/remove/post/"  % trigpath, []),
+--- a/certmaster/certmaster.py
++++ b/certmaster/certmaster.py
+@@ -353,7 +353,7 @@
+     cm = CertMaster('/etc/certmaster/certmaster.conf')
+ 
+     if "daemon" in argv or "--daemon" in argv:
+-        utils.daemonize("/var/run/certmaster.pid")
++        utils.daemonize("/var/run/certmasterd.pid")
+     else:
+         print "serving...\n"
+ 
+--- a/docs/certmaster-request.pod
++++ b/docs/certmaster-request.pod
+@@ -1,11 +1,11 @@
+ =head1 NAME
+ 
+-certmaster-request -- requests SSL certs from a certmasster
+-Fedora Unified Network Controller.
++certmaster-request -- requests SSL certs from a certmaster Fedora Unified
++Network Controller.
+ 
+ =head1 SYNOPSIS
+ 
+-certmaster-request [--server certmaster.example.com] [--port port] 
++certmaster-request [--server certmaster.example.com] [--port port]
+ [ --wait infinite/seconds ]
+ 
+ =head1 DESCRIPTION
+@@ -21,7 +21,7 @@
+ 
+ =head1 EXIT_STATUS
+ 
+-non-zero upon failure.
++Non-zero upon failure.
+ 
+ =head1 ADDITONAL RESOURCES
+ 
+@@ -29,9 +29,9 @@
+ 
+ See also the manpages for "certmaster", and "certmaster-ca".
+ 
+-=head1 AUTHOR
++=head1 AUTHORS
+ 
+-Various. See https://fedorahosted.org/func and
+-https://fedorahosted.org/certmaster
++Various.  See https://fedorahosted.org/certmaster and
++https://fedorahosted.org/func
+ 
+ 
+--- a/docs/certmaster.pod
++++ b/docs/certmaster.pod
+@@ -1,29 +1,29 @@
+ =head1 NAME
+ 
+-certmaster -- hands out certificates to programs that want them, like
+-certmaster-request or users of the certmaster API
++certmasterd -- hands out certificates to programs that want them, like
++certmaster-request or users of the certmaster API.
+ 
+ =head1 SYNOPSIS
+ 
+-certmaster (it's a daemon and takes no arguments)
++certmasterd (it's a daemon and takes no arguments)
+ 
+ =head1 DESCRIPTION
+ 
+ See https://fedorahosted.org/certmaster
+ 
+-Certmaster is a daemon that runs on a "master" machine to hand out certificates to machines that want them.  Certificates can then be used by applications like func.
++Certmasterd is a daemon that runs on a "master" machine to hand out
++certificates to machines that want them.  Certificates can then be used
++by applications like func.
+ 
+-Certmaster is configured by /etc/certmaster/certmaster.conf
++Certmasterd is configured by /etc/certmaster/certmaster.conf
+ 
+ =head1 ADDITONAL RESOURCES
+ 
+ See https://fedorahosted.org/certmaster/.  It's a Wiki.
+-See also 
+ See also the manpages for "certmaster-request" and "certmaster-ca".
+ 
+ =head1 AUTHOR
+ 
+-Various. See https://fedorahosted.org/certmaster  and
++Various.  See https://fedorahosted.org/certmaster and
+ https://fedorahosted.org/func
+ 
+-
+--- a/etc/minion.conf
++++ b/etc/minion.conf
+@@ -1,8 +1,8 @@
+ # configuration for minions
+ 
+ [main]
+-certmaster = certmaster
++certmaster = localhost
+ certmaster_port = 51235
+-log_level = DEBUG
++log_level = INFO
+ cert_dir = /etc/pki/certmaster
+ 

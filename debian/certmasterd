@@ -1,0 +1,170 @@
+#!/bin/sh
+
+################################################################################
+#. LSB Header
+
+### BEGIN INIT INFO
+# Provides: certmasterd
+# Required-Start: network
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: certificate master for Fedora Unified Network Control 'master server only'
+# Description: certificate master to sign/manage ca/cert infrastructure
+### END INIT INFO
+
+################################################################################
+#. ChkConfig Header
+# chkconfig: - 98 99
+# description:  certificate master to sign/manage ca/cert infrastructure
+#
+# processname: /usr/sbin/certmasterd
+
+SERVICE=certmaster
+PROCESS=certmasterd
+DAEMON=/usr/sbin/certmasterd
+PIDFILE=/var/run/certmasterd.pid
+DAEMON_ARGS="--daemon"
+PID=
+
+[ -x "${DAEMON}" ] || exit 1
+FANCYTTY=1
+
+isAlive() {
+    #PID=`ps -C "${PROCESS}" --no-heading -o '%P %p'|awk '$1~/^1$/ {print$2;exit}'`
+    TTL=9
+    PID=`pgrep -f "${DAEMON}"`
+    test -z "${PID}" && T0="DEAD" || T0="LIVE"
+    while [ $TTL -gt 0 ]; do
+        if [ "${T0}" = "DEAD" ]; then
+            test -z "${PID}" || break
+        else
+            test ! -z "${PID}" || break
+        fi
+        TTL=`expr $TTL - 1`
+        sleep 0.1;
+        PID=`pgrep -f "${DAEMON}"`
+    done
+    test ! -z "${PID}"
+    return $?
+}
+
+if [ -f /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+    alias START_DAEMON=start_daemon
+    alias STATUS=isAlive
+    alias LOG_SUCCESS=log_success_msg
+    alias LOG_FAILURE=log_failure_msg
+    alias LOG_WARNING=log_warning_msg
+elif [ -f /etc/init.d/functions ]; then
+    . /etc/init.d/functions
+    alias START_DAEMON=daemon
+    alias STATUS=status
+    alias LOG_SUCCESS=success
+    alias LOG_FAILURE=failure
+    alias LOG_WARNING=passed
+else
+    echo "Error: your platform is not supported by $0" > /dev/stderr
+    exit 1
+fi
+
+RETVAL=0
+
+start() {
+    log_daemon_msg "Starting ${SERVICE} daemon" ${PROCESS}
+
+    RETVAL=9
+
+    isAlive
+    if [ $? -ne 0 ]; then
+        #. Remove an obviously stale PID file first if it exists...
+        test ! -f "${PIDFILE}" || rm -f ${PIDFILE}
+
+        OUTPUT=`start-stop-daemon \
+            --start \
+            --verbose \
+            --pidfile ${PIDFILE} \
+            --exec ${DAEMON} \
+            --name ${PROCESS} \
+            -- ${DAEMON_ARGS}`
+        RETVAL=$?
+    else
+        OUTPUT="${SERVICE} daemon already running."
+        RETVAL=255
+    fi
+
+    log_end_msg ${RETVAL}
+    test ${RETVAL} -ne 0 && test ! -z "${OUTPUT}" && echo " ! ${OUTPUT}"
+
+    test ${RETVAL} -ne 255 || RETVAL=0
+    return ${RETVAL}
+}
+
+stop() {
+    log_daemon_msg "Stopping ${SERVICE} daemon" ${PROCESS}
+
+    RETVAL=9
+
+    isAlive
+    if [ $? -eq 0 ]; then
+        if [ ! -f ${PIDFILE} ]; then
+            test -z "${PID}" || printf ${PID} > ${PIDFILE}
+        elif [ -z "${PID}" ]; then
+            rm -f ${PIDFILE}
+        fi
+
+        OUTPUT=`start-stop-daemon \
+            --stop \
+            --verbose \
+            --retry=TERM/60/KILL/5 \
+            --pidfile ${PIDFILE} \
+            --name ${PROCESS}`
+        RETVAL=$?
+        test ${RETVAL} -ne 0 || rm -f ${PIDFILE}
+    else
+        OUTPUT="No ${SERVICE} daemon running."
+        RETVAL=255
+    fi
+
+    log_end_msg ${RETVAL}
+    test ${RETVAL} -ne 0 && test ! -z "${OUTPUT}" && echo " ! ${OUTPUT}"
+
+    test ${RETVAL} -ne 255 || RETVAL=0
+    return ${RETVAL}
+}
+
+status() {
+    isAlive
+    if [ $? -eq 0 ]; then
+        printf "${DAEMON} is running.\n";
+    else
+        printf "${DAEMON} is not running.\n";
+    fi
+}
+
+restart() {
+    stop
+    start
+}
+
+#. See how we were called.
+case "$1" in
+    start|stop|restart|status)
+        $1
+        RETVAL=$?
+        ;;
+    condrestart)
+        [ -f /var/lock/subsys/$SERVICE ] && restart || :
+        ;;
+    reload|force-reload)
+        echo "can't reload configuration, you have to restart it"
+        RETVAL=1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+        RETVAL=1
+        ;;
+esac
+
+exit $RETVAL
+

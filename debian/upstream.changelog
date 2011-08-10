@@ -1,0 +1,469 @@
+commit fe0312d51aed3602354f61de94042af653907075
+Author: Phil <func@mailzilla.com>
+Date:   Thu Mar 5 15:28:44 2009 -0500
+
+    add a monit configuration file
+
+commit 919c9c3a4f5418b55108c1ec903160f0400900df
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Tue Mar 3 17:41:12 2009 -0500
+
+    change utils.get_hostname to just do the basic thing. Move the bits
+    that do all the config checking and route lookup and other madness
+    to func.utils.get_hostname_by_route
+
+commit 907668bd5063ebf8c4e2c11abcbd6cb46880808d
+Merge: d0bee22... a900ddc...
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Sat Feb 21 00:39:32 2009 -0500
+
+    Merge branch 'master' of ssh://alikins@git.fedorahosted.org/git/certmaster
+    
+    Conflicts:
+    	Makefile
+
+commit a900ddc0bc93714a22d219623bf65d6ac10be71f
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Fri Feb 20 19:12:14 2009 -0500
+
+    there was a trailing space on the version
+
+commit d0bee2210b885bd8269e5ada00ccf12ed6f9b049
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Feb 19 11:36:15 2009 -0500
+
+    rev to release 5 for rebuild
+
+commit b38315c26dbcc9e626dc295fe612a0ef3c7e8596
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Feb 18 19:47:15 2009 -0500
+
+    remove "version" file and updated spec/makefile/setup.py to not need it
+
+commit ed20b2fa1f9e733e24a17c7983d5b411623c4ecc
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Feb 12 15:08:59 2009 -0500
+
+    add a excepthook handler for uncaught exceptions, so they get written to the log
+    
+    https://fedorahosted.org/func/ticket/70
+
+commit fd57bba2195c2b8405b6317755f6ad7030702dfc
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Jan 22 11:55:11 2009 -0500
+
+    change old urls to new urls
+
+commit 9297dabe6c1511bb36a669b505f5586e420b608f
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Jan 21 14:58:45 2009 -0500
+
+    make the python executable we use a makefile variable
+
+commit cd13dd2c5c5e85461ac5b19aa48480d1ef80b94b
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Mon Jan 19 16:45:22 2009 -0500
+
+    certmaster.spec: Try to simplify the support for rhel3+python2.3 a little bit.
+    
+    We let distutils do the /usr/bin/python path munging for the files that need
+    it (aka, everything in "scripts"). So we can get rid of the patch for this
+    (we also cleaned up all the files that had a #! set that didn't need it)
+    
+    Some minor spec file formatting changes as well
+
+commit 8b44578eb6d42cef58627b88e99fc394c5b66674
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Mon Jan 19 14:47:45 2009 -0500
+
+    permissions cleanup on source files
+
+commit 296f8832222f28d4a8c51f54693789fd93f5bc05
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Tue Jan 13 17:33:15 2009 -0500
+
+    fix up some docs bugs. Looks like they were introduced in the certmaster/func split.
+    
+    fix https://fedorahosted.org/certmaster/ticket/5  (certmaster-request man page
+    was getting created incorrectly)
+
+commit f1f25ec0ccbb48b0fa699771125eb93d76d3ceed
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Dec 17 15:30:08 2008 -0500
+
+    0.24
+
+commit 8092325418f916bf744437c3c42acf4d22ca0a61
+Author: Tim Bielawa <timbielawa@gmail.com>
+Date:   Mon Dec 15 14:00:37 2008 -0500
+
+    Patch from Tim Bielawa <timbielawa@gmail.com> to make init scripts work
+    on debian/ubuntu
+
+commit ca8dd9b8ac04f18b550225a9cbbd927b1dc61794
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Mon Dec 8 14:30:42 2008 -0500
+
+    add missing dirs to spec file (trigger dirs)
+    fix for bugzilla #473633
+
+commit c95655b5cb63caf9428898c56ef5cb26d118a678
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Tue Nov 18 10:56:37 2008 -0500
+
+    removed unneed line that reset the requesting_host
+
+commit 48b1e96d3c66a1a733ca573505e7203651142308
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Nov 12 11:53:59 2008 -0500
+
+    Make the port that certmaster listens on and funcd connects to configurable.
+    
+    add listen_port to /etc/certmaster/certmaster.conf to configure which
+    port certmaster runs on.
+    
+    add certmaster_port to /etc/certmaster/minion.conf so funcd knows which
+    port to talk to certmaster on.
+
+commit 5bb4be3edcfdf031d7446e434ef4f51309ce32c7
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Oct 15 16:12:07 2008 -0400
+
+    change triggers so we pass in the name of the machine the request/sign/remove is for
+    and pass it to the triggers
+    
+    This could potentially break some existing triggers if they dont expect
+    and argument. However, it's documented that they should expect a
+    name argument, they just weren't ever getting one until now.
+
+commit ca0b109bfb78736cb3997b536ac20dadf32485bd
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Fri Sep 19 14:52:32 2008 -0400
+
+    fix for utils.daemonize() as reported in https://fedorahosted.org/func/ticket/58
+    by goozbach
+    
+    Couple of things wrong, fd's were getting closed in wrong place, the
+    call to os.cwd('/') was supposed to be os.chdir('/')
+    
+    Also try duping the fd's just in case
+
+commit d7d7203553c024cbddd726d499eb351b460cb9f3
+Merge: 6a9cbb7... 7bcf299...
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Fri Sep 5 14:15:52 2008 -0400
+
+    Merge branch 'master' of ssh://alikins@git.fedoraproject.org/git/hosted/certmaster
+
+commit 6a9cbb753bd700b0913694f38241505fabdee653
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Fri Sep 5 14:10:39 2008 -0400
+
+    credit for patch for Jonathan Barber <j.barber@dundee.ac.uk>
+
+commit d512d680d6fb50cdeae615492fb35741d44bd3a4
+Author: Jonathan Barber <j.barber@dundee.ac.uk>
+Date:   Fri Sep 5 14:09:35 2008 -0400
+
+    close stdin/stdout/stderr on daemonize
+    
+    patch from Jonathan Barber <j.barber@dundee.ac.uk>
+
+commit 7bcf299ccedeb8d22b163f24657eb801cd31bbd9
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Fri Sep 5 13:15:59 2008 -0400
+
+    rev to 0.23-1
+
+commit 37f80fb5318f344c4a0db4b53d6e314a5223ddb2
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Jul 24 15:28:14 2008 -0400
+
+    add #*# files correctly to .gitignore
+
+commit fd723d846a22739678d40ef49bf81a8b5825effa
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Jul 24 15:26:25 2008 -0400
+
+    add more stuff to shut up git
+
+commit 344fe487ed1deb3ca57808fe428aa538008d84be
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Jul 24 15:25:23 2008 -0400
+
+    add .gitignore
+
+commit 621cc4e377e0bf0a48a7bbbf384a3f28d9933be9
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Thu Jul 24 12:42:04 2008 -0400
+
+    merge with the code from func
+    remove a spurious debug line
+
+commit 16ba4922c09e81f063ac10c65c70ac4fe9c0e0a7
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Mon Jun 30 12:59:21 2008 -0400
+
+    /s/June/Jun (incorrect changelog entry)
+
+commit e422ef1bf36a87cd3c2f759131eef99d451dbfd4
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Mon Jun 30 12:40:29 2008 -0400
+
+    fix fedora bug #441283 - typo in postinstall scriptlet
+      (the init.d symlinks for runlevels 1 and 6 were created wrong)
+    
+    rev releae
+
+commit d5eded3c967d0506a5b955816cd61ba8776f3dea
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Jun 30 12:31:45 2008 -0400
+
+    Updating AUTHORS
+
+commit 0da13bceda2eaeb399e33665e2d1f35fa7f311f6
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Jun 30 12:25:01 2008 -0400
+
+    Bump version for release, clean up wrong versions in changelog.
+
+commit 19a746a04e6851c05fa42e38b284ac3af96284c4
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Jun 30 12:19:20 2008 -0400
+
+    Remove stray print
+
+commit 73840166dd547b1df3a4f3e7dbf2648e2be55614
+Author: TANABE Ken-ichi <nabeken@tknetworks.org>
+Date:   Sat Jun 28 15:48:19 2008 +0900
+
+    Add default value of 'cert_extension' in certmaster.conf
+
+commit 4b12ee4b5dbfc7fa680bf350b6a48e9bf4772fb0
+Author: TANABE Ken-ichi <nabeken@tknetworks.org>
+Date:   Sat Jun 28 15:47:30 2008 +0900
+
+    Add cert_extension option
+
+commit 1c44d82bc9270466521e8c8d5339d0213935f385
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Wed Apr 30 22:37:07 2008 -0400
+
+    add two new options to "certmaster-ca"
+    
+    -list-signed shows a list of certs the certmaster has already signed
+    
+    --list-cert-hashes returns the list of signed certs in the CN-hash format that
+    the acls files expects. Should make it a little easier to use the acls.
+    
+    Both options take optional hostnames or hostname globs
+
+commit 7e743092d11acb95be40a415c3a9207fd040a0cf
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Tue Apr 22 14:36:37 2008 -0400
+
+    apply triggers patch from Steve Salevan <ssalevan@redhat.com>
+    
+    Steves comments:
+    Adding in triggering functionality, changed specfile and
+    MANIFEST.in to reflect changes.  Added sub_process.py file to
+    facilitate the subprocesses necessary for triggering to work.
+    Modified certmaster.py to add trigger points.
+
+commit ece4c159e4fd726a70b1da25821493fb8a90c8b3
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Tue Apr 22 14:36:17 2008 -0400
+
+    apply triggers patch from Steve Salevan <ssalevan@redhat.com>
+    
+    Steves comments:
+    Adding in triggering functionality, changed specfile and
+    MANIFEST.in to reflect changes.  Added sub_process.py file to
+    facilitate the subprocesses necessary for triggering to work.
+    Modified certmaster.py to add trigger points.
+
+commit e92972a02d0e506cb7780694642137201421a74a
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Tue Mar 18 16:06:43 2008 -0400
+
+    more logging info. log info for sign_this_csr()
+
+commit f9375dad2c0da2be5279dfaa0aa4d0a2754147ba
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Tue Mar 18 16:06:01 2008 -0400
+
+    be a bit more verbose in the logging here, add file location info to logs
+
+commit f47209c9f53021c9aaa6d3e8d3548fa50175f464
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Tue Mar 18 15:24:11 2008 -0400
+
+    fix a bug where certmaster was writing out the client csr file over and over if it had been
+    created, but not signed.
+    
+    Also, add some debug logging.
+
+commit c3e4dd36b5723f95202d0446e96a9d0b00246eac
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Mon Mar 17 18:16:19 2008 -0400
+
+    certmaster logging cleanups
+    
+    - use unique name for the certmaster logs
+    - some not quite working code for passing down client info so we can log
+
+commit af4f09f155f4a4f1c5a9e3e29b4c8736f892dce4
+Author: Adrian Likins <root@grimlock.devel.redhat.com>
+Date:   Mon Mar 17 17:10:32 2008 -0400
+
+    remove unused certmaster/minion/ and certmaster/overlord/ dirs
+    
+    update spec and setup accordingly
+
+commit 6146feb4b676ba7e10f5f175bb50149c20c53b18
+Author: Adrian Likins <root@grimlock.devel.redhat.com>
+Date:   Mon Mar 17 17:09:36 2008 -0400
+
+    add some basic logging output to certmaster
+
+commit 006fe254641002b5a2d7cefc9e2b7eb97438bed7
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Mar 6 14:02:15 2008 -0500
+
+    Do not move versions backward
+
+commit c445941b69adac84ff7311bc41f4c93456923d29
+Author: Adrian Likins <alikins@redhat.com>
+Date:   Wed Mar 5 15:53:37 2008 -0500
+
+    lame build fix. Messages/gettext stuff needs to be sorted out. We done
+    seem to find any messages to translate,so po/messages.pot isnt created.
+    So for now, create it with a touch.
+
+commit 4ccddddaa05dbfb5904905a7442ecd8ab91c0764
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Mon Feb 25 17:56:31 2008 -0500
+
+    remove references to certmasterd
+
+commit 140dc3622629501333bd253fadd27d810871782f
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 17:54:03 2008 -0500
+
+    Config file tweaks
+
+commit 25e64a20184460d732d6c1b0847f1e5109ed2d30
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 17:46:52 2008 -0500
+
+    Make hostname checking smarter.
+
+commit 956aa6739978bea3c56f532d3dab15f075c46aa2
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 17:03:10 2008 -0500
+
+    Add missing file
+
+commit 2108f87ee704ac86f5a6b924c03afc86e0fa617d
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 16:59:13 2008 -0500
+
+    Find and replace
+
+commit 613a485c4798b38a65042e9d78968896c590fdd0
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 16:53:08 2008 -0500
+
+    Certmaster hostname check is different than minion check
+
+commit d6dfdb25c4e8be31d77ba8db7c3499e3f10e0c4b
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Mon Feb 25 16:48:47 2008 -0500
+
+    Pushing changes as part of certmaster split
+
+commit 9713ae6bad871bc151d378d3d837f09d6e646832
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Mon Feb 25 13:59:54 2008 -0500
+
+    some certmaster fixes, mostly path stuff
+
+commit 624727a2446d81e1c786d4fb9101cd35603534c4
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Wed Feb 13 14:10:30 2008 -0500
+
+    duplicate fix from func tree over here
+
+commit 1b545eb1f1874cd5ba38d849c489785f947018f3
+Author: Adrian Likins <alikins@grimlock.devel.redhat.com>
+Date:   Wed Feb 13 12:56:43 2008 -0500
+
+    message building fixes in the Makefile
+
+commit 95653d77d32d8d6c2cab320c9a04cad74d405a1e
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Wed Feb 13 13:11:20 2008 -0500
+
+    Add missing file
+
+commit 3f460ad56ec4b219cc36287c393c28475faa15c1
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 14:47:50 2008 -0500
+
+    Make things build (not to be confused with "work")
+
+commit e996c22f239c1c3a426fcbce2aa9394089d240e0
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 14:17:45 2008 -0500
+
+    Makefile from func.
+
+commit a419c0fb6d0456a058462ea31f76fbdbeac63d99
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 14:15:25 2008 -0500
+
+    Trimming more stuff out.
+
+commit 4a7f409334528affd3b0245f9fe6e0b35e50e54b
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 13:30:51 2008 -0500
+
+    Misc s/func/certmaster/ replacements
+
+commit 79aca0c825d41f538d36966ec66d272b02dae475
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 13:21:17 2008 -0500
+
+    Fix paths in logs
+
+commit 8f2ff4d7c902d534d68ff1a16418b7be492033bf
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 13:13:24 2008 -0500
+
+    Carving away at func some more to just get down to cert items, still lots
+    more to do.
+
+commit 5b2601a56907b02efc6567354fa051ef08d97b6f
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 12:52:44 2008 -0500
+
+    Changing func to certmaster in top level directories, also covered
+    certs directory, lots more to do.
+
+commit 697402da24ca930b3608359a61b9872fdddc62d9
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 12:08:55 2008 -0500
+
+    Starting off the certmaster tree with most of the func code, shortly non-certmaster related parts will be removed, and other small parts added/tweaked
+
+commit ac3061bcffd2ea634596c188beaa13339e3fa24a
+Author: Michael DeHaan <mdehaan@redhat.com>
+Date:   Thu Feb 7 09:42:45 2008 -0500
+
+    Test test
+
+commit f95b036c9095249c1cbcd0bfc60e8e7beff8c572
+Author: Seth Vidal <skvidal@hosted1.fedoraproject.org>
+Date:   Tue Feb 5 08:57:39 2008 -0700
+
+    lalala

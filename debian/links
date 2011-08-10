@@ -1,0 +1,3 @@
+usr/share/certmaster/certmasterd usr/sbin/certmasterd
+usr/share/certmaster/certmaster-ca usr/bin/certmaster-ca
+usr/share/certmaster/certmaster-request usr/bin/certmaster-request

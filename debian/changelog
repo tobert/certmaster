@@ -1,0 +1,154 @@
+certmaster (0.25-1) experimental; urgency=low
+
+  * New upstream release.
+  * Cleanup of init.d script.
+  * debian/rules: pass --prefix=/usr to setup.py. Closes: #557793.
+
+ -- Nima Talebi <nima@it.net.au>  Sun, 13 Dec 2009 04:07:29 +1100
+
+certmaster (0.24-19) experimental; urgency=low
+
+  * Simplified `postrm' script.
+
+ -- Nima Talebi <nima@it.net.au>  Fri, 13 Mar 2009 01:17:32 +1100
+
+certmaster (0.24-18) experimental; urgency=low
+
+  * Updated/fixed docs/manpages.
+
+ -- Nima Talebi <nima@it.net.au>  Fri, 13 Mar 2009 00:57:03 +1100
+
+certmaster (0.24-17) experimental; urgency=low
+
+  * Call `dh_installdeb' after `dh_pycentral'.
+  * Remove logs on `purge'.
+
+ -- Nima Talebi <nima@it.net.au>  Fri, 13 Mar 2009 00:00:19 +1100
+
+certmaster (0.24-16) experimental; urgency=low
+
+  * The init.d script to be verbose only on warnings/errors.
+  * Fixed bad check for certmasterd process.
+
+ -- Nima Talebi <nima@it.net.au>  Sat, 07 Mar 2009 22:34:30 +1100
+
+certmaster (0.24-15) experimental; urgency=low
+
+  * No more junk (.{binary,source,lintian}) to worry about cleaning.
+  * Removed dh_testroot from `clean' target.
+  * Added upstream changelog to remove the final and only warning (pedantic).
+  * Changed runfile from `certmaster.pid' to `certmasterd.pid' via Quilt.
+
+ -- Nima Talebi <nima@it.net.au>  Sat, 07 Mar 2009 14:25:35 +1100
+
+certmaster (0.24-14) experimental; urgency=low
+
+  * The `dh_fixperms' was being called too late, and it was only by the luck of
+    my 022 umask that it did not generate warnings for me - Fixed.
+  * Remove intermediate dotfiles on dh_clean.
+
+ -- Nima Talebi <nima@it.net.au>  Wed, 04 Mar 2009 09:39:59 +1100
+
+certmaster (0.24-13) experimental; urgency=low
+
+  * Restructured filesystem again.
+
+ -- Nima Talebi <nima@it.net.au>  Mon, 02 Mar 2009 23:18:29 +1100
+
+certmaster (0.24-12) experimental; urgency=low
+
+  * Restructered installation to use /usr/share/certmaster instead.
+  * Binaries are also now in /usr/share/certmaster and dh_linked.
+
+ -- Nima Talebi <nima@it.net.au>  Thu, 26 Feb 2009 11:02:06 +1100
+
+certmaster (0.24-11) experimental; urgency=low
+
+  * Gave up on patching init.d script and just provided our own.
+
+ -- Nima Talebi <nima@it.net.au>  Sun, 08 Feb 2009 02:30:29 -0800
+
+certmaster (0.24-10) experimental; urgency=low
+
+  * Removed `binary' target from rules file, there is no `binary' here.
+  * Separated fixes that I'd like upstream to implement into their own targets.
+  * Renamed `certmaster' to `certmasterd' to hint that it is not supposed to be
+    executed interactively.
+  * Install the rotation script as `certmaster' not `certmaster_rotate'.
+
+ -- Nima Talebi <nima@it.net.au>  Sat, 07 Feb 2009 15:02:22 -0800
+
+certmaster (0.24-9) experimental; urgency=low
+
+  * Updated copyright.
+  * Added README.Debian.
+  * Start funcd on postinst, and stop on prerm.
+  * Fix defaults in configuration file to listen on localhost.
+
+ -- Nima Talebi <nima@it.net.au>  Fri, 06 Feb 2009 18:42:33 -0800
+
+certmaster (0.24-8) experimental; urgency=low
+
+  * Changed architecture from "any" to "all".
+  * Added missing dependency on python openssl.
+  * Added dirs for created directories to streamline removal where possible.
+  * Added prerm script.
+  * Added invoke-rc.d for stopping and starting the certmaster daemon.
+  * Added a README.Debian file.
+  * Removed docs as they merely contain the manpages.
+  * Added more patches via quilt for setting sane defaults for the certmaster
+
+ -- Nima Talebi <nima@it.net.au>  Thu, 05 Feb 2009 21:20:22 +1100
+
+certmaster (0.24-7) experimental; urgency=low
+
+  * Cleaned all lintian errors/warnings from te binary, which was
+    completely missed as pointed out by Christoph Haas.
+
+ -- Nima Talebi <nima@it.net.au>  Thu, 22 Jan 2009 06:11:58 -0800
+
+certmaster (0.24-6) experimental; urgency=low
+
+  * Clean up after setup.py and quilt.
+  * As a crappy fix, generate the `real' manpage with pod2man, but
+    replace it with the borked one on `clean'.
+  * Add perl (pod2man) as a build dependency.
+
+ -- Nima Talebi <nima@it.net.au>  Mon, 19 Jan 2009 05:17:18 -0800
+
+certmaster (0.24-5) experimental; urgency=low
+
+  * Reverted to original source tarball from upstream, as opposed to
+    the latest from git.
+
+ -- Nima Talebi <nima@it.net.au>  Mon, 19 Jan 2009 03:47:15 -0800
+
+certmaster (0.24-4) experimental; urgency=low
+
+  * Updated copyright notice.
+  * Updated long description.
+  * Switched to using quilt instead; hence version number is reverted back, but
+    incrementing the Debian revision as per usual.
+
+ -- Nima Talebi <nima@it.net.au>  Fri, 16 Jan 2009 23:10:16 -0800
+
+certmaster (0.24.1-3) experimental; urgency=low
+
+  * Another cleanup release.
+
+ -- Nima Talebi <nima@it.net.au>  Tue, 13 Jan 2009 19:34:47 -0800
+
+certmaster (0.24.1-2) experimental; urgency=low
+
+  * Clean up release.
+
+ -- Nima Talebi <nima@it.net.au>  Tue, 13 Jan 2009 15:42:46 -0800
+
+certmaster (0.24.1-1) experimental; urgency=low
+
+  * Asked upstream to fix a few minor bugs (Which they did). This change has
+    only been commited into the git repo, and no new tarball has been released,
+    hence the upstream will be referred to as `0.24.1' as opposed to `0.24'.
+  * Initial release (Closes: #511681)
+
+ -- Nima Talebi <nima@it.net.au>  Tue, 13 Jan 2009 01:02:43 -0800
