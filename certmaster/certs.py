@@ -88,8 +88,30 @@ def retrieve_cert_from_file(certfile):
     cert = crypto.load_certificate(crypto.FILETYPE_PEM, buf)
     return cert
 
+def _build_extension_list(cert, dnsname=None, ca_enabled=False):
+    subject = cert.get_subject()
+    extensions = []
 
-def create_ca(CN="Certmaster Certificate Authority", ca_key_file=None, ca_cert_file=None):
+    if ca_enabled is True:
+        extensions.append(crypto.X509Extension('basicConstraints', 1,'CA:TRUE'))
+    else:
+        extensions.append(crypto.X509Extension('basicConstraints', 1,'CA:FALSE'))
+
+    if dnsname is None:
+        dnsname = subject.CN
+
+    # modeled after StoneVPN/app.py
+    try:
+        extensions.append(crypto.X509Extension('nsComment', 0, "Created by certmaster."))
+        # set dnsName to commonName, which certmaster sets to the hostname
+        extensions.append(crypto.X509Extension('subjectAltName', 0, "DNS:%s" % dnsname))
+        # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)
+    except ValueError:
+        print "Your version of pyOpenSSL does not support x509Extension properly. Try >= 0.9."
+
+    return extensions
+
+def create_ca(CN="Certmaster Certificate Authority", ca_key_file=None, ca_cert_file=None, dnsname=None):
     cakey = make_keypair(dest=ca_key_file)
     careq = make_csr(cakey, cn=CN)
     cacert = crypto.X509()
@@ -100,15 +122,12 @@ def create_ca(CN="Certmaster Certificate Authority", ca_key_file=None, ca_cert_f
     cacert.set_subject(careq.get_subject())
     cacert.set_pubkey(careq.get_pubkey())
     cacert.set_version(2)
-    xt = crypto.X509Extension('basicConstraints',1,'CA:TRUE')
-    # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)
-    cacert.add_extensions((xt,))
+    cacert.add_extensions(_build_extension_list(cert=cacert, dnsname=dnsname, ca_enabled=True))
     cacert.sign(cakey, 'sha1')
     if ca_cert_file:
         destfo = open(ca_cert_file, 'w')
         destfo.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
         destfo.close()
-
 
 def _get_serial_number(cadir):
     serial = '%s/serial.txt' % cadir
@@ -132,7 +151,6 @@ def _set_serial_number(cadir, last):
     f.write(str(last) + '\n')
     f.close()
 
-
 def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
     cert = crypto.X509()
     cert.set_serial_number(_get_serial_number(cadir))
@@ -142,9 +160,7 @@ def create_slave_certificate(csr, cakey, cacert, cadir, slave_cert_file=None):
     cert.set_subject(csr.get_subject())
     cert.set_pubkey(csr.get_pubkey())
     cert.set_version(2)
-    xt = crypto.X509Extension('basicConstraints', False ,'CA:FALSE')
-    # FIXME - add subjectkeyidentifier and authoritykeyidentifier extensions, too)
-    cert.add_extensions((xt,))
+    cert.add_extensions(_build_extension_list(cert=cert))
     cert.sign(cakey, 'sha1')
     if slave_cert_file:
         destfo = open(slave_cert_file, 'w')
