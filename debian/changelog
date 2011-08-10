@@ -1,3 +1,9 @@
+certmaster (0.28-1) experimental; urgency=low
+
+  * new upstream release
+
+ -- Al Tobey <al@ooyala.com>  Wed, 10 Aug 2011 13:52:35 -0700
+
 certmaster (0.25-1) experimental; urgency=low
 
   * New upstream release.

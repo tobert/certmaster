@@ -18,9 +18,9 @@ if __name__ == "__main__":
         initpath   = "/etc/init.d/"
         logpath    = "/var/log/%s/" % NAME
 	certdir    = "/var/lib/%s/" % NAME
-	certmaster_cert_dir = "/var/lib/%s/%s" % (NAME,NAME)
-	certmaster_cert_certs_dir = "/var/lib/%s/%s/certs" % (NAME, NAME)
-	certmaster_cert_csrs_dir = "/var/lib/%s/%s/csrs" % (NAME, NAME)
+	certmaster_cert_dir = "/var/lib/%s" % NAME
+	certmaster_cert_certs_dir = "/var/lib/%s/certs" % NAME
+	certmaster_cert_csrs_dir = "/var/lib/%s/csrs" % NAME
 	trigpath   = "/var/lib/%s/triggers/"% NAME
         pkipath    = "/etc/pki/%s" % NAME
         rotpath    = "/etc/logrotate.d"
@@ -33,7 +33,7 @@ if __name__ == "__main__":
                 url = "https://fedorahosted.org/certmaster/",
                 license = "GPL",
 		scripts = [
-                     "scripts/certmaster", "scripts/certmaster-ca",
+                     "scripts/certmasterd", "scripts/certmaster-ca",
                      "scripts/certmaster-request", "scripts/certmaster-sync",
                 ],
 		# package_data = { '' : ['*.*'] },
@@ -49,7 +49,7 @@ if __name__ == "__main__":
                               (manpath,  ["docs/certmaster-request.1.gz"]),
                               (manpath,  ["docs/certmaster-ca.1.gz"]),
                               (manpath,  ["docs/certmaster-sync.1.gz"]),
-			      (rotpath,  ['etc/certmaster_rotate']),
+			      (rotpath,  ['logrotate.d/certmaster']),
                               (logpath,  []),
 			      (certdir,  []),
 			      (certmaster_cert_dir, []),

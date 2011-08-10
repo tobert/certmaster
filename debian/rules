@@ -1,5 +1,4 @@
 #!/usr/bin/make -f
-include /usr/share/quilt/quilt.make
 
 export DH_VERBOSE=0
 export DH_PYCENTRAL=include-links
@@ -7,13 +6,12 @@ PKG = certmaster
 
 PYVERS  = $(shell pyversions -vr)
 PACKAGE = $(shell dh_listpackages)
-BORKED = docs/certmaster-request.1.gz.BORKED
 PYINST = $(CURDIR)/debian/certmaster
 
 ################################################################################
 #. Build
 build: build-stamp
-build-stamp: fix patch
+build-stamp: fix
 	dh_testdir
 	dh_prep
 	python$* setup.py build
@@ -34,8 +32,10 @@ install: install-stamp
 	#.
 	dh_pycentral
 	dh_installdeb
+
 install-stamp: build-stamp $(PYVERS:%=install-ext-%)
 	touch $@
+
 install-ext-%:
 	dh_testdir
 	dh_testroot
@@ -65,46 +65,46 @@ binary-indep: build install
 #. while they don't, I'll fix it myself here...
 .PHONY: unfix fix
 
-fix: scripts/certmasterd logrotate.d/certmaster
-	#. Cleaning after upstream...
-	test -f $(BORKED) || mv $(BORKED:.BORKED=) $(BORKED)
+fix:
 	pod2man \
 	  --center="certmaster-request" \
 	  --release="" \
 	  docs/certmaster-request.pod \
 	    | gzip -c \
-	    > $(BORKED:.BORKED=)
+	    > docs/certmaster-request.1.gz
 	pod2man \
 	  --center="certmasterd" \
 	  --release="" \
 	  docs/certmaster.pod \
 	    | gzip -c \
-	    > docs/certmasterd.1.gz
-scripts/certmasterd:
-	mv scripts/certmaster $@
-logrotate.d/certmaster:
-	mkdir logrotate.d
-	mv etc/certmaster_rotate $@
+	    > docs/certmaster.1.gz
+	pod2man \
+	  --center="certmaster-ca" \
+	  --release="" \
+	  docs/certmaster-ca.pod \
+	    | gzip -c \
+	    > docs/certmaster-ca.1.gz
+	pod2man \
+	  --center="certmaster-sync" \
+	  --release="" \
+	  docs/certmaster-sync.pod \
+	    | gzip -c \
+	    > docs/certmaster-sync.1.gz
 
-
-
-unfix: scripts/certmaster etc/certmaster_rotate
-	#. Cleaning after upstream...
-	test ! -f $(BORKED) || mv $(BORKED) $(BORKED:.BORKED=)
-	test ! -f docs/certmasterd.1.gz || rm -f docs/certmasterd.1.gz
-scripts/certmaster:
-	mv scripts/certmasterd $@
-etc/certmaster_rotate:
-	mv logrotate.d/certmaster $@
-	rmdir logrotate.d
+unfix:
+	test ! -f docs/certmaster-request.1.gz || rm -f docs/certmaster-request.1.gz
+	test ! -f docs/certmaster.1.gz || rm -f docs/certmaster.1.gz
+	test ! -f docs/certmaster-ca.1.gz || rm -f docs/certmaster-ca.1.gz
 
 ################################################################################
 #. Clean
-clean: $(PYVERS:%=clean-ext-%) unpatch unfix
+clean: $(PYVERS:%=clean-ext-%) unfix
 	dh_testdir
 	dh_clean build-stamp install-stamp $(PYVERS:%=install-ext-%)
 	test ! -d build || rm -rf build
+
 clean-ext-%:
 	python$* setup.py clean
 
 .PHONY: build clean binary-indep binary-arch binary install
+
