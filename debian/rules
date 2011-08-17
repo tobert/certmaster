@@ -73,7 +73,7 @@ fix:
 	    | gzip -c \
 	    > docs/certmaster-request.1.gz
 	pod2man \
-	  --center="certmasterd" \
+	  --center="certmaster" \
 	  --release="" \
 	  docs/certmaster.pod \
 	    | gzip -c \

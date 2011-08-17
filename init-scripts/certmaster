@@ -10,6 +10,9 @@
 # Required-Start: network
 # Short-Description: certificate master for Fedora Unified Network Control 'master server only'
 # Description: certificate master to sign/manage ca/cert infrastructure
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
 ### END INIT INFO
 
 # chkconfig header

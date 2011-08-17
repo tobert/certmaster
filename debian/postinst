@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
-update-rc.d certmasterd defaults > /dev/null
-invoke-rc.d certmasterd start
+#update-rc.d certmaster defaults > /dev/null
+#invoke-rc.d certmaster start
 #DEBHELPER#

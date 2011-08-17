@@ -13,7 +13,7 @@
 
 set -e
 
-update-rc.d -f certmasterd remove > /dev/null
+update-rc.d -f certmaster remove > /dev/null
 
 case $1 in
   remove)

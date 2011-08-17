@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PID=`ps -C "certmasterd" --no-heading -o '%P %p'|awk '$1~/^1$/ {print$2;exit}'`
-test -z "${PID}" || invoke-rc.d certmasterd stop
+PID=`ps -C "certmaster" --no-heading -o '%P %p'|awk '$1~/^1$/ {print$2;exit}'`
+test -z "${PID}" || invoke-rc.d certmaster stop
 
 #DEBHELPER#
